@@ -84,12 +84,16 @@ int main(int argc, char *argv[]) {
   //********************************* Define your Histograms Here *******************************
 
   //    1D-Histograms
-  HistoMan->CreateHistograms("Analyzer","Analyzer hit counts",34,3099,3133);
-  HistoMan->CreateHistograms("BackTagger1","Back Tagger layer 1", 18,4099,4117);
-  HistoMan->CreateHistograms("BackTagger2","Back Tagger layer 2", 18,4199,4217);
-  HistoMan->CreateHistograms("LeftHodo","Left Hodoscope hit counts",26,5099,5125);
-  HistoMan->CreateHistograms("RightHodo","Right Hodoscope hit counts",26,5199,5225);
+  HistoMan->CreateHistograms("Analyzer","Analyzer hit counts",34,20099,21033);
+  HistoMan->CreateHistograms("HCAL","HCAL hit counts",290,11000,11289); 
+  HistoMan->CreateHistograms("LeftHodo","Left Hodoscope hit counts",26,60099,61025);
+  HistoMan->CreateHistograms("RightHodo","Right Hodoscope hit counts",26,70099,71025);
 
+  for(int i = 0; i < 288; i++){
+	std::string hName = "HCAL_Edep_" + std::to_string(i+1);
+	std::string hTitle = "HCAL Detector " + std::to_string(i+1) + " Energy Deposited (MeV)";
+	HistoMan->CreateHistograms(hName.c_str(),hTitle.c_str(),100,0,200);
+  }
   for(int i = 0; i < 32; i++){
 	std::string hName = "Analyzer_Edep_" + std::to_string(i+1);
 	std::string hTitle = "Analyzer Detector " + std::to_string(i+1) + " Energy Deposited (MeV)";
@@ -103,12 +107,29 @@ int main(int argc, char *argv[]) {
 	hTitle = "Right Hodoscope Detector " + std::to_string(i+1) + " Energy Deposited (MeV)";
 	HistoMan->CreateHistograms(hName.c_str(),hTitle.c_str(),100,0,20);
   }
-  for(int i = 0; i < 16; i++){
-	std::string hName = "Back_Tagger_1_Edep_" + std::to_string(i+1);
-	std::string hTitle = "Back Tagger Layer 1 Detector " + std::to_string(i+1) + " Energy Deposited (MeV)";
+  for(int i = 0; i < 2; i++){
+	std::string hName = "INFN_Front_Edep_" + std::to_string(i+1);
+	std::string hTitle = "INFN Front Tracker GEM Detector " + std::to_string(i+1) + "Energy Deposited (MeV)";
 	HistoMan->CreateHistograms(hName.c_str(),hTitle.c_str(),100,0,20);
-	hName = "Back_Tagger_2_Edep_" + std::to_string(i+1);
-	hTitle = "Back Tagger Layer 2 Detector " + std::to_string(i+1) + " Energy Deposited (MeV)";
+  }
+  for(int i = 0; i < 2; i++){
+	std::string hName = "UVA_Front_Edep_" + std::to_string(i+1);
+	std::string hTitle = "UVA Front Tracker GEM Detector " + std::to_string(i+1) + "Energy Deposited (MeV)";
+	HistoMan->CreateHistograms(hName.c_str(),hTitle.c_str(),100,0,20);
+  }
+  for(int i = 0; i < 4; i++){
+	std::string hName = "UVA_Rear_Edep_" + std::to_string(i+1);
+	std::string hTitle = "UVA Rear Tracker GEM Detector " + std::to_string(i+1) + "Energy Deposited (MeV)";
+	HistoMan->CreateHistograms(hName.c_str(),hTitle.c_str(),100,0,20);
+  }
+  for(int i = 0; i < 2; i++){
+	std::string hName = "UVA_LeftWing_Edep_" + std::to_string(i+1);
+	std::string hTitle = "UVA Left Wing Tracker GEM Detector " + std::to_string(i+1) + "Energy Deposited (MeV)";
+	HistoMan->CreateHistograms(hName.c_str(),hTitle.c_str(),100,0,20);
+  }
+  for(int i = 0; i < 2; i++){
+	std::string hName = "UVA_RightWing_Edep_" + std::to_string(i+1);
+	std::string hTitle = "UVA Right Wing Tracker GEM Detector " + std::to_string(i+1) + "Energy Deposited (MeV)";
 	HistoMan->CreateHistograms(hName.c_str(),hTitle.c_str(),100,0,20);
   }
 
@@ -131,7 +152,7 @@ int main(int argc, char *argv[]) {
     totalEvents += ((*stats)[0])->totalEvents;
   }
   double electronTime = totalEvents/(6.242e12); //6.242e12 e-/s at 1 microAmp (amount of physical time at 1uA)
-  std::cout << totalEvents << " neutrons thrown at setup." << std::endl;
+  std::cout << totalEvents << " electrons thrown at setup." << std::endl;
   // ****** END STATS LOOP ****** 
   
   std::map<int,int> scintCounter;
@@ -143,11 +164,11 @@ int main(int argc, char *argv[]) {
    	if(i % 1000 == 0) std::cout << "Processing event #" << i << std::endl;
 	npolTree->GetEntry(i);
 	
-	std::pair<double,std::vector<double> > initNeutron4Vec;
-	std::pair<double,std::vector<double> > recoilParticle4Vec;
-	std::pair<double,std::vector<double> > projNeutron4Vec;
-	std::pair<double,std::vector<double> > scattNeutron4Vec;
-	std::pair<double,std::vector<double> > scattParticle4Vec;
+	//std::pair<double,std::vector<double> > initNeutron4Vec;
+	//std::pair<double,std::vector<double> > recoilParticle4Vec;
+	//std::pair<double,std::vector<double> > projNeutron4Vec;
+	//std::pair<double,std::vector<double> > scattNeutron4Vec;
+	//std::pair<double,std::vector<double> > scattParticle4Vec;
 
 	std::map<std::string,NpolVertex *> vertexMap;  // Vertex Map Keyed to volume of origin
 	std::map<std::string,NpolDetectorEvent *> detEvents;   // Event map (NPOL Detector Class)
@@ -196,34 +217,52 @@ int main(int argc, char *argv[]) {
 	  int AVNum = PProcess->GetAVNumber(volumeName);
 	  int ImprNum = PProcess->GetImprNumber(volumeName);
 	  int PVNum = PProcess->GetPlacementNumber(volumeName);
+	  double eDep = 0.0;
 	  std::string hName = "";
 	  if(AVNum != -1 && det_it->second->thresholdExceeded){
-		int detNum = AVNum*1000 + ImprNum *100 + PVNum;
+		int detNum = AVNum*10000 + ImprNum *1000 + PVNum;
 		if(scintCounter.find(detNum) == scintCounter.end()) scintCounter[detNum] = 0;
 		scintCounter[detNum]++;
 	  }
-
-	  double eDep = det_it->second->totEnergyDep;
+	 
+	  eDep = det_it->second->totEnergyDep;
 	  if(eDep == 0) continue;
-	  if(AVNum == 3){
+	  if (AVNum == 1){
+		hName = "HCAL_Edep_" + std::to_string(PVNum + 1);
+		HistoMan->FillHistograms(hName,eDep);
+	  } else if(AVNum == 2){
 		hName = "Analyzer_Edep_" + std::to_string(PVNum + 1);
 		HistoMan->FillHistograms(hName,eDep);
+	  } else if (AVNum == 3){
+		if(ImprNum == 1) hName = "INFN_Front_Edep_1";
+		if(ImprNum == 2) hName = "INFN_Front_Edep_2";
+		HistoMan->FillHistograms(hName,eDep);
 	  } else if (AVNum == 4){
-		if(ImprNum == 1) hName = "Back_Tagger_1_Edep_" + std::to_string(PVNum + 1);
-		if(ImprNum == 2) hName = "Back_Tagger_2_Edep_" + std::to_string(PVNum + 1);
+		if(ImprNum == 1) hName = "UVA_Front_Edep_1";
+		if(ImprNum == 2) hName = "UVA_Front_Edep_2";
+		if(ImprNum == 3) hName = "UVA_Rear_Edep_1";
+		if(ImprNum == 4) hName = "UVA_Rear_Edep_2";
+		if(ImprNum == 5) hName = "UVA_Rear_Edep_3";
+		if(ImprNum == 6) hName = "UVA_Rear_Edep_4";
 		HistoMan->FillHistograms(hName,eDep);
 	  } else if (AVNum == 5){
-		if(ImprNum == 1) hName = "LHodo_Edep_" + std::to_string(PVNum + 1);
-		if(ImprNum == 2) hName = "RHodo_Edep_" + std::to_string(PVNum + 1);
+		if(ImprNum == 2) hName = "UVA_LeftWing_Edep_1";
+		if(ImprNum == 1) hName = "UVA_LeftWing_Edep_2";
+		if(ImprNum == 4) hName = "UVA_RightWing_Edep_1";
+		if(ImprNum == 3) hName = "UVA_RightWing_Edep_2";
+		HistoMan->FillHistograms(hName,eDep);
+	  } else if (AVNum == 6){
+		hName = "LHodo_Edep_" + std::to_string(PVNum + 1);
+		HistoMan->FillHistograms(hName,eDep);
+	  } else if (AVNum == 7){
+		hName = "RHodo_Edep_" + std::to_string(PVNum + 1);
 		HistoMan->FillHistograms(hName,eDep);
 	  }
 	}
-
-	
-	
+	 	
     // Clear out the maps for the next event
 	
-    eDepArrayTotal.clear();
+	eDepArrayTotal.clear();
 	std::map<std::string,NpolDetectorEvent *>::iterator e_it;
     for(e_it = detEvents.begin(); e_it != detEvents.end(); e_it++) delete e_it->second;
     detEvents.clear();
@@ -232,37 +271,31 @@ int main(int argc, char *argv[]) {
 	for(v_it2 = vertexMap.begin(); v_it2 != vertexMap.end(); v_it2++) delete v_it2->second;
 	vertexMap.clear();
 	
-	initNeutron4Vec.second.clear();
-	recoilParticle4Vec.second.clear();
-	projNeutron4Vec.second.clear();
-	scattNeutron4Vec.second.clear();
-	scattParticle4Vec.second.clear();
+	//initNeutron4Vec.second.clear();
+	//recoilParticle4Vec.second.clear();
+	//projNeutron4Vec.second.clear();
+	//scattNeutron4Vec.second.clear();
+	//scattParticle4Vec.second.clear();
 	
   }	// END EVENT LOOP
-
-  int countLhodo =0;
+  
   std::map<int,int>::iterator scint_it;
   for(scint_it = scintCounter.begin(); scint_it != scintCounter.end(); scint_it++){
-	if(scint_it->first >= 5100 && scint_it->first <=5124) {
+	if(scint_it->first >= 60099 && scint_it->first <= 61025) {
 	  for(int j = 0; j < scint_it->second; j++){
 		HistoMan->FillHistograms("LeftHodo",scint_it->first);
-		countLhodo++;
 	  }
-	} else if(scint_it->first >= 5200 && scint_it->first <=5224) {
+	} else if(scint_it->first >= 70099 && scint_it->first <= 71025) {
 	  for(int j = 0; j < scint_it->second; j++){
 		HistoMan->FillHistograms("RightHodo",scint_it->first);
 	  }
-	} else if(scint_it->first >= 3100 && scint_it->first <=3132) {
+	} else if(scint_it->first >= 20099 && scint_it->first <= 21033) {
 	  for(int j = 0; j < scint_it->second; j++){
 		HistoMan->FillHistograms("Analyzer",scint_it->first);
 	  }
-	} else if(scint_it->first >= 4100 && scint_it->first <=4117) {
+	} else if(scint_it->first >= 11000 && scint_it->first <= 11289) {
 	  for(int j = 0; j < scint_it->second; j++){
-		HistoMan->FillHistograms("BackTagger1",scint_it->first);
-	  }
-	} else if(scint_it->first >= 4200 && scint_it->first <=4217) {
-	  for(int j = 0; j < scint_it->second; j++){
-		HistoMan->FillHistograms("BackTagger2",scint_it->first);
+		HistoMan->FillHistograms("HCAL",scint_it->first);
 	  }
 	}
   }
