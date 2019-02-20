@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<gdml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="schema/gdml.xsd">
+
+<define>
+ 	<constant name="PI" value="1.*pi"/>
+	<variable name="target_to_hbbore_center" value="176"/>
+	<constant name="fBoreRot" value="1.5"/>
+	<constant name="tempOffSet" value="0.5"/>
+
+	<constant name="fHBBoreXfp" value="11.75"/>
+	<constant name="fHBBoreXfn" value="-4.13"/>
+	<constant name="fHBBoreXbp" value="11.70"/>
+	<constant name="fHBBoreXbn" value="-11.71"/>
+	<constant name="fHBBoreY" value="20.75"/>
+	<constant name="fHBBoreZ" value="115.22"/>
+	<constant name="fHBBoreCenterX" value="0"/>
+	<constant name="fHBBoreCenterY" value="0"/>
+	<constant name="fHBBoreCenterZ" value="0"/>
+
+	<constant name="fHBCoilThick" value="1.38"/>
+	<constant name="fHBCoilWidth" value="13"/>
+	<constant name="fHBCoilZ" value="94"/>
+	<constant name="fHBCoilY" value="28.05"/>
+	<constant name="fHBCoilIntZ" value="67"/>
+	<constant name="fHBCoilLeftBoreXOffset" value="15"/>
+
+	<constant name="fHBCoilBoxXfn" value="-fHBCoilThick-1.5+fHBBoreXfn"/>
+	<constant name="fHBCoilBoxXfp" value="1+fHBCoilThick+fHBBoreXfp"/>
+	<constant name="fHBCoilBoxXbp" value="1+fHBCoilThick+fHBBoreXbp"/>
+	<constant name="fHBCoilBoxXbn" value="-fHBCoilThick-1.5+fHBBoreXbn"/>
+	<constant name="fHBCoilBoxY" value="fHBCoilY*2"/>
+	<constant name="fHBCoilBoxZ" value="fHBCoilZ"/>
+
+	<constant name="fHBCoilBoxCutXfn" value="fHBCoilThick+fHBCoilBoxXfn"/>
+	<constant name="fHBCoilBoxCutXfp" value="-fHBCoilThick+fHBCoilBoxXfp"/>
+	<constant name="fHBCoilBoxCutXbp" value="-fHBCoilThick+fHBCoilBoxXbp"/>
+	<constant name="fHBCoilBoxCutXbn" value="fHBCoilThick+fHBCoilBoxXbn"/>
+	<constant name="fHBCoilBoxCutY" value="(-fHBCoilThick+fHBCoilY)*2"/>
+	<constant name="fHBCoilBoxCutZ" value="fHBCoilThick+fHBCoilZ"/>
+
+	<constant name="fHBCoilBoxTopCutXfn" value="-2+fHBCoilBoxXfn"/>
+	<constant name="fHBCoilBoxTopCutXfp" value="2+fHBCoilBoxXfp"/>
+	<constant name="fHBCoilBoxTopCutXbp" value="2+fHBCoilBoxXbp"/>
+	<constant name="fHBCoilBoxTopCutXbn" value="-2+fHBCoilBoxXbn"/>
+	<constant name="fHBCoilBoxTopCutY" value="3+fHBCoilWidth"/>
+	<constant name="fHBCoilBoxTopCutZ" value="fHBCoilIntZ"/>
+
+	<constant name="fHBYorkFrontWidth" value="40.804"/>
+	<constant name="fHBYorkBackWidth" value="45"/>
+	<constant name="fHBYorkTopWidth" value="42.5"/>
+	<constant name="fHBYorkXfn" value="-6-fHBCoilThick+fHBBoreXfn"/>
+	<constant name="fHBYorkXfp" value="2+fHBBoreXfp+fHBYorkTopWidth+fHBCoilThick"/>
+	<constant name="fHBYorkXbp" value="2+fHBBoreXfp+fHBYorkTopWidth+fHBCoilThick"/>
+	<constant name="fHBYorkXbn" value="-5+fHBBoreXbn"/>
+	<constant name="fHBYorkY" value="120"/>
+	<constant name="fHBYorkZ" value="60"/>
+
+	<constant name="fHBCryoBoxXfn" value="-4+fHBCoilBoxXfn"/>
+	<constant name="fHBCryoBoxXfp" value="6+fHBCoilBoxXfp"/>
+	<constant name="fHBCryoBoxXbp" value="6+fHBCoilBoxXbp"/>
+	<constant name="fHBCryoBoxXbn" value="-5+fHBCoilBoxXbn"/>
+	<constant name="fHBCryoBoxY" value="4+fHBCoilBoxY"/>
+	<constant name="fHBCryoBoxZ" value="-0.1+fHBBoreZ"/>
+
+  	<position name="Origin" unit="cm" x="0" y="0" z="0" />
+   	<position name="pYork" unit="cm" x="-6" y="0" z="0" />	
+	<position name="pHBCoilTopCut" unit="cm" x="0" y="fHBCoilWidth+fHBCoilBoxTopCutY/2" z="0" />
+  	<position name="pHBCoilBottomCut" unit="cm" x="0" y="-(fHBCoilWidth+fHBCoilBoxTopCutY/2)" z="0" />
+  
+ 	<rotation name="identity" unit="deg" x="0" y="0" z="0" />
+	<rotation name="rHBRot" unit="deg" x="0" y="fBoreRot" z="0" />
+	<rotation name="rHBCoilLeftRot" unit="deg" x="0" y="-3.0" z="0" />
+	<rotation name="rHBCoilRightRot" unit="deg" x="0" y="-7.0" z="0" />
+
+</define>
+
+<materials>
+	<element name="videRef" formula="VACUUM" Z="1">
+	<atom value="1"/>
+	</element>
+
+	<element Z="7" formula="N" name="Nitrogen" >
+   	<atom value="14.007" />
+  	</element>
+
+  	<element Z="8" formula="O" name="Oxygen" >
+   	<atom value="15.999" />
+  	</element>
+
+   	<material formula=" " name="Air" >
+   	<D value="0.00129" />
+   	<fraction n="0.7" ref="Nitrogen" />
+   	<fraction n="0.3" ref="Oxygen" />
+	</material>
+
+	<material name="Copper" Z="29">
+   	<D unit="g/cm3" value="8.96"/> <atom unit="g/mole" value="63.546"/>
+  	</material>
+
+	<material name="BVacuum" formula="Vacuum">
+	<D unit="g/cm3" value ="1E-25"/>
+	<fraction n="1.0" ref="videRef"/>
+	</material>
+	
+	<material name="SSteel" Z="1.0">
+   	<D value="2.70"/> <atom value="26.98"/>
+  	</material>
+</materials>
+
+<solids>
+ 
+	<arb8 lunit="cm" name="HBenderBox" dz="fHBCoilBoxZ/2+15" 
+		v1x="+62.0" v1y="+64.0" 
+		v2x="+62.0" v2y="-64.0"
+        v3x="-14.0" v3y="-64.0" 
+		v4x="-14.0" v4y="+64.0" 
+		v5x="+62.0" v5y="+64.0" 
+		v6x="+62.0" v6y="-64.0"
+        v7x="-24.0" v7y="-64.0" 
+		v8x="-24.0" v8y="+64.0"/>
+
+	<arb8 lunit="cm" name="hbBore" dz="(fHBBoreZ/2)" 
+		v1x="fHBBoreXfn" v1y="-fHBBoreY/2" 
+		v2x="fHBBoreXfn" v2y="fHBBoreY/2"
+        v3x="fHBBoreXfp" v3y="fHBBoreY/2" 
+		v4x="fHBBoreXfp" v4y="-fHBBoreY/2" 
+		v5x="fHBBoreXbn" v5y="-fHBBoreY/2" 
+		v6x="fHBBoreXbn" v6y="fHBBoreY/2"
+        v7x="fHBBoreXbp" v7y="fHBBoreY/2" 
+		v8x="fHBBoreXbp" v8y="-fHBBoreY/2"/>
+	
+	<arb8 lunit="cm" name="hbYork" dz="fHBYorkZ/2" 
+		v1x="fHBYorkXfn" v1y="-fHBYorkY/2" 
+		v2x="fHBYorkXfn" v2y="fHBYorkY/2"
+        v3x="fHBYorkXfp" v3y="fHBYorkY/2" 
+		v4x="fHBYorkXfp" v4y="-fHBYorkY/2" 
+		v5x="fHBYorkXbn" v5y="-fHBYorkY/2" 
+		v6x="fHBYorkXbn" v6y="fHBYorkY/2"
+        v7x="fHBYorkXbp" v7y="fHBYorkY/2" 
+		v8x="fHBYorkXbp" v8y="-fHBYorkY/2"/>
+
+	<arb8 lunit="cm" name="hbCoilBox" dz="fHBCoilBoxZ/2" 
+		v1x="fHBCoilBoxXfn" v1y="-fHBCoilBoxY/2" 
+		v2x="fHBCoilBoxXfn" v2y="fHBCoilBoxY/2"
+        v3x="fHBCoilBoxXfp" v3y="fHBCoilBoxY/2" 
+		v4x="fHBCoilBoxXfp" v4y="-fHBCoilBoxY/2" 
+		v5x="fHBCoilBoxXbn" v5y="-fHBCoilBoxY/2" 
+		v6x="fHBCoilBoxXbn" v6y="fHBCoilBoxY/2"
+        v7x="fHBCoilBoxXbp" v7y="fHBCoilBoxY/2" 
+		v8x="fHBCoilBoxXbp" v8y="-fHBCoilBoxY/2"/>
+
+	<arb8 lunit="cm" name="hbCoilBoxCut" dz="fHBCoilBoxCutZ/2" 
+		v1x="fHBCoilBoxCutXfn" v1y="-fHBCoilBoxCutY/2" 
+		v2x="fHBCoilBoxCutXfn" v2y="fHBCoilBoxCutY/2"
+        v3x="fHBCoilBoxCutXfp" v3y="fHBCoilBoxCutY/2" 
+		v4x="fHBCoilBoxCutXfp" v4y="-fHBCoilBoxCutY/2" 
+		v5x="fHBCoilBoxCutXbn" v5y="-fHBCoilBoxCutY/2" 
+		v6x="fHBCoilBoxCutXbn" v6y="fHBCoilBoxCutY/2"
+        v7x="fHBCoilBoxCutXbp" v7y="fHBCoilBoxCutY/2" 
+		v8x="fHBCoilBoxCutXbp" v8y="-fHBCoilBoxCutY/2"/>
+
+	<arb8 lunit="cm" name="hbCoilBoxTopCut" dz="fHBCoilBoxTopCutZ/2" 
+		v1x="fHBCoilBoxTopCutXfn" v1y="-fHBCoilBoxTopCutY/2" 
+		v2x="fHBCoilBoxTopCutXfn" v2y="fHBCoilBoxTopCutY/2"
+        v3x="fHBCoilBoxTopCutXfp" v3y="fHBCoilBoxTopCutY/2" 
+		v4x="fHBCoilBoxTopCutXfp" v4y="-fHBCoilBoxTopCutY/2" 
+		v5x="fHBCoilBoxTopCutXbn" v5y="-fHBCoilBoxTopCutY/2" 
+		v6x="fHBCoilBoxTopCutXbn" v6y="fHBCoilBoxTopCutY/2"
+        v7x="fHBCoilBoxTopCutXbp" v7y="fHBCoilBoxTopCutY/2" 
+		v8x="fHBCoilBoxTopCutXbp" v8y="-fHBCoilBoxTopCutY/2"/>
+
+	<arb8 lunit="cm" name="hbCryoBoxFull" dz="fHBCryoBoxZ/2" 
+		v1x="fHBCryoBoxXfn" v1y="-fHBCryoBoxY/2" 
+		v2x="fHBCryoBoxXfn" v2y="fHBCryoBoxY/2"
+        v3x="fHBCryoBoxXfp" v3y="fHBCryoBoxY/2" 
+		v4x="fHBCryoBoxXfp" v4y="-fHBCryoBoxY/2" 
+		v5x="fHBCryoBoxXbn" v5y="-fHBCryoBoxY/2" 
+		v6x="fHBCryoBoxXbn" v6y="fHBCryoBoxY/2"
+        v7x="fHBCryoBoxXbp" v7y="fHBCryoBoxY/2" 
+		v8x="fHBCryoBoxXbp" v8y="-fHBCryoBoxY/2"/>
+
+	<arb8 lunit="cm" name="hbCryoBoxCut" dz="(-2+fHBCryoBoxZ)/2" 
+		v1x="0.5+fHBCoilBoxXfn" v1y="-(-2+fHBCryoBoxY)/2" 
+		v2x="0.5+fHBCoilBoxXfn" v2y="(-2+fHBCryoBoxY)/2"
+        v3x="-1+fHBCryoBoxXfp" v3y="(-2+fHBCryoBoxY)/2" 
+		v4x="-1+fHBCryoBoxXfp" v4y="-(-2+fHBCryoBoxY)/2" 
+		v5x="1+fHBCryoBoxXbn" v5y="-(-2+fHBCryoBoxY)/2" 
+		v6x="1+fHBCryoBoxXbn" v6y="(-2+fHBCryoBoxY)/2"
+        v7x="-1+fHBCryoBoxXbp" v7y="(-2+fHBCryoBoxY)/2" 
+		v8x="-1+fHBCryoBoxXbp" v8y="-(-2+fHBCryoBoxY)/2"/>
+
+	<subtraction name="hbCoilsCutMiddle">
+	<first ref="hbCoilBox"/>
+	<second ref="hbCoilBoxCut"/>
+	<positionref ref="Origin"/>
+	</subtraction>
+
+	<subtraction name="hbCoilsCutTop">
+	<first ref="hbCoilsCutMiddle"/>
+	<second ref="hbCoilBoxTopCut"/>
+	<positionref ref="pHBCoilTopCut"/>
+	</subtraction>
+
+	<subtraction name="hbCoilsCutBottom">
+	<first ref="hbCoilsCutTop"/>
+	<second ref="hbCoilBoxTopCut"/>
+	<positionref ref="pHBCoilBottomCut"/>
+	</subtraction>
+
+	<subtraction name="hbCoils">
+	<first ref="hbCoilsCutBottom"/>
+	<second ref="hbBore"/>
+	<positionref ref="Origin"/>
+	</subtraction>
+
+	<subtraction name="HBYorkSolid">
+	<first ref="hbYork"/>
+	<second ref="hbCryoBoxFull"/>
+	<positionref ref="Origin"/>
+	</subtraction>
+
+	<subtraction name="hbCryoSolid">
+	<first ref="hbCryoBoxFull"/>
+	<second ref="hbCryoBoxCut"/>
+	<positionref ref="Origin"/>
+	</subtraction>
+
+	<subtraction name="hbCryoMinusBore">
+	<first ref="hbCryoSolid"/>
+	<second ref="hbBore"/>
+	<positionref ref="Origin"/>
+	</subtraction>
+
+</solids>
+
+<structure>
+
+  <volume name="HBBoreLogic">
+    <materialref ref="BVacuum"/>
+    <solidref ref="hbBore"/>
+  </volume>
+  
+  <volume name="HBCoilLogic">
+    <materialref ref="Copper"/>
+    <solidref ref="hbCoils"/>
+    <auxiliary auxtype="SensDet" auxvalue="HBCoil"/>
+  </volume>
+  
+  <volume name="HBYorkLogic">
+    <materialref ref="SSteel"/>
+    <solidref ref="HBYorkSolid"/>
+  </volume>
+  
+  <volume name="HBCryoBoxLogic">
+    <materialref ref="SSteel"/>
+    <solidref ref="hbCryoMinusBore"/>
+    <auxiliary auxtype="SensDet" auxvalue="HBCryoBox"/>
+  </volume>
+  
+
+  <volume name="HBenderPV">
+    <materialref ref="Air"/>
+    <solidref ref="HBenderBox"/>
+    
+    <physvol name="HBBorePV">
+      <volumeref ref="HBBoreLogic"/>
+      <positionref ref="Origin"/>
+    </physvol>
+    
+    <physvol name="HBCoilPV">
+      <volumeref ref="HBCoilLogic"/>
+      <positionref ref="Origin"/>
+    </physvol>
+    
+    <physvol name="HBYorkPV">
+      <volumeref ref="HBYorkLogic"/>
+      <positionref ref="Origin"/>
+    </physvol>
+    
+    <physvol name="HBCryoBoxPV">
+      <volumeref ref="HBCryoBoxLogic"/>
+      <positionref ref="Origin"/>
+    </physvol>
+    
+  </volume>
+  
+</structure>
+<setup name="Default" version="1.0">
+  <world ref="HBenderPV" />
+</setup>
+
+</gdml>
