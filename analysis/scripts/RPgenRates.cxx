@@ -1,6 +1,7 @@
 
 #include <cstdlib>
 #include <iostream>
+#include <fstream>
 #include <string>
 #include <vector>
 #include <map>
@@ -21,8 +22,6 @@
 #include <TROOT.h>
 #include <TObject.h>
 #include <TString.h>
-#include <TMultiGraph.h>
-#include <TLegend.h>
 
 void CanvasPartition(TCanvas *C,const Int_t Nx = 2,const Int_t Ny = 2, 
 		     Float_t lMargin = 0.15, Float_t rMargin = 0.05,
@@ -32,304 +31,324 @@ void CanvasPartition(TCanvas *C,const Int_t Nx = 2,const Int_t Ny = 2,
 int GetAVNumber(const std::string &volName);
 int GetImprNumber(const std::string &volName);
 int GetPlacementNumber(const std::string &volName);
-//TString FormInputFile(TString InputDir);
-//TString FormOutputFile(TString OutputDir);
-//void RetrieveENVvariables();
+TString FormInputFile(TString InputDir);
+TString FormOutputFile(TString OutputDir);
+void RetrieveENVvariables();
+void GetCanvasParameters(int n);
 
+int PVnumMax = 0, AVnum = 1, ImprNumMax = 2, layerNum = 1;
 TString BaseName = "";  TString JobNum = "";  TString Lead = ""; TString Energy = ""; 
 TString Bfield = ""; TString OutputDir = ""; TString InputDir = "";
+std::string FancyName = ""; std::string RealName = "";
 
 void RPgenRates() {
 
+  RetrieveENVvariables();
   Long_t TotalElectrons = 0, TotalEventsRecorded = 0; 
-
-  std::string histoNames[3][2]={{"av_9_impr_1_FrontDetLV_pv_1","av_9_impr_1_FrontDetLV_pv_0"},{"av_9_impr_1_FrontDetLV_pv_3","av_9_impr_1_FrontDetLV_pv_2"},{"av_9_impr_1_FrontDetLV_pv_5","av_9_impr_1_FrontDetLV_pv_4"}};
-   
-  //RetrieveENVvariables();
-  //TString InputFile = FormInputFile(InputDir);
-  //TString OutputFile = FormOutputFile(OutputDir);
-
-  Double_t y1min = 0; Double_t y1max = 0;
-  Double_t y2min = 0.0005; Double_t y2max = 1.705;
-  Double_t y3min = 0.75; Double_t y3max = 2.25;
- 
-  TString PType1 = "Charged";
-  TString PType2 = "Charged";
-  TString CutType1 = "AllVolumes_";  // put '_' after any Non-NULL strings
-  TString CutType2 = "AllVolumes_";
-  TString BaseDIR = "/home/tireman/data1/TargetTaggerSource/4.4GeV/4Bdl/ComparisonStuff";
-
-  TFile *inFile = TFile::Open(BaseDIR + "/histos/sourceTotal_Lead15cm_4.4GeV_1Bdl_7m_" + CutType1 + PType1+"_Histos.root");
-  TFile *inFile2 = TFile::Open(BaseDIR + "/histos/sourceTotal_Lead15cm_4.4GeV_1Bdl_5m_" + CutType2 + PType2+"_Histos.root");
-  TFile *outFile = new TFile(BaseDIR + "/Plots/FrontAnalyzerComparison_" + CutType1 + "1Bdl_7m_" + PType1 + "_" + CutType2 + "_1Bdl_5m_" + PType2 + ".root","RECREATE");
+  TString InputFile = FormInputFile(InputDir);
+  TString OutputFile = FormOutputFile(OutputDir);
+  TFile *inFile = TFile::Open(InputFile);
+  TFile *outFile = new TFile(OutputFile,"RECREATE");
 
   // Retrieve the object with the total number of electrons on target and calculate 
   // effective electron time on target per micro amp of beam
-
   TVectorD *v = (TVectorD*)inFile->Get("TVectorT<double>");
-  Double_t totalElectrons = 10*19.995e9; //((*v))[0];
+  Double_t totalElectrons = ((*v))[0]; //1e11; //((*v))[0];
   Double_t electronTime = totalElectrons/(6.242e12); //6.242e12 e-/s at 1 microAmp
-  //Double_t fluxscaling = 1/(totalElectrons*1.602e-13*(98*60));
   std::cout << "Electron beam time at 1 micro-amp is " << electronTime << " s " << std::endl;
-  std::cout << "Total electrons on target: " << totalElectrons/1e6 << " Million" << std::endl;
+  std::cout << "Total electrons on target: " << totalElectrons/1e9 << " Billion" << std::endl;
 
-  TCanvas *c1 = new TCanvas("c1","Front Analyzer Energy Plots at Polarimeter Angle 28.0 Deg, E = 4.4 GeV",1000,900);
-  TCanvas *c2 = new TCanvas("c2","Front Analyzer Count Rate vs. Threshold plots",1000,900);
-  TCanvas *c3 = new TCanvas("c3","Front Analyzer Count Rate ratios vs. Threshold plots",1000,900);
-
-  Int_t Nx = 3, Ny = 2, nThresh = 10, fillStyle = 1001;
-  int pvNum, avNum, imprNum;
-  Float_t lMargin = 0.10, rMargin = 0.05, bMargin = 0.10, tMargin = 0.05;
+  int pvNum = 1, avNum = 1, imprNum = 1;
+  Int_t Nx = 16, Ny = 2, nThresh = 10, fillStyle = 1001;
+  Float_t lMargin = 0.05, rMargin = 0.05, bMargin = 0.10, tMargin = 0.05;
   Float_t vSpacing = 0.0; Float_t hSpacing = 0.0;
-  double CTagger[Nx][Ny];
-  double Thresholds[10]={1.0,2.0,3.0,4.0,6.0,8.0,10.0,12.0,14.0,16.0};
+  double DetCounts[Nx][Ny];
   double CountRates [nThresh][Nx][Ny];
-  double CTagger2[Nx][Ny];
-  double CountRates2 [nThresh][Nx][Ny];
+  std::ofstream txtOut, thresh1MeV, thresh10MeV;
+  txtOut.open(OutputDir + "/Output/NpolDetectorCountRates" + Energy + "GeV_" + Lead + "cm.out");
+  thresh1MeV.open(OutputDir + "/Output/Threshold1MeVCountRates" + Energy + "GeV_" + Lead + "cm.out");
+  thresh10MeV.open(OutputDir + "/Output/Threshold10MeVCountRates" + Energy + "GeV_" + Lead + "cm.out");
+  //***************************  Main portion of code ***************************************
+  // The main job of this code is to take in a file containing all the energy histograms of
+  // the CGEN polarimeter and generate 2 canvas plots for each assembly volume/imprint group.
+  // The first canvas is just formatted energy depositied plots.  The second canvas is a set
+  // of graphs plotting raw count rates versus threshold setting.  These graphs have been 
+  // scaled to 1 micro-amp of electron beam on target for convenience.  All canvases are 
+  // saved to a ROOT file and the threshold values are saved to text file as well.
+  //
+  // Three loops are needed. Loop over 'n' is for all the assembly volume/imprint combos.
+  // There are currently 22 of them.  Loop over 'i' and 'j' fill the canvases with the 
+  // individual plots.  
+  //*****************************************************************************************
 
-  CanvasPartition(c1,Nx,Ny,lMargin,rMargin,bMargin,tMargin,vSpacing,hSpacing);
-  CanvasPartition(c2,Nx,Ny,lMargin,rMargin,bMargin,tMargin,vSpacing,hSpacing);
-  CanvasPartition(c3,Nx,Ny,lMargin,rMargin,bMargin,tMargin,vSpacing,hSpacing);
+  TCanvas *C1[22], *C2[22], *C3[22];
+  TPad *pad1[22][7][2]; TPad *pad2[22][7][2]; TPad *pad3[22][7][2];
+  char histoName[60], tempName[9], tempName2[8], tempName3[9]; 
+  for(int n = 0; n < 22; n++){	
+	pvNum = 0;
+	GetCanvasParameters(n);
+	if(PVnumMax == 13){ Nx = 7; } else { Nx = PVnumMax/2; }
+	sprintf(tempName,"canvas%i",n);
+	sprintf(tempName2,"graph%i",n);
+	sprintf(tempName3,"Counts%i",n);
+	C1[n]= new TCanvas(tempName,"Energy Plots at Polarimeter Angle 28.0 Deg, E = 4.4 GeV",1500,900);
+	C2[n]= new TCanvas(tempName2,"Count Rate vs. Threshold plots",1500,900);
+	C3[n]= new TCanvas(tempName3,"Counts vs. Threshold plots",1500,900);
+	
+	CanvasPartition(C1[n],Nx,Ny,lMargin,rMargin,bMargin,tMargin,vSpacing,hSpacing);
+	CanvasPartition(C2[n],Nx,Ny,lMargin,rMargin,bMargin,tMargin,vSpacing,hSpacing);
+	CanvasPartition(C3[n],Nx,Ny,lMargin,rMargin,bMargin,tMargin,vSpacing,hSpacing);
 
-  TPad *pad[Nx][Ny];
-  TPad *pad1[Nx][Ny];
-  TPad *pad2[Nx][Ny];
-    
-  for(int i = 0; i < Nx; i++){
-   for(int j = 0; j < Ny; j++){
-     c1->cd(0);
-     // Get the pads previosly created.
-     char pname[16];
-     sprintf(pname,"pad_%i_%i",i,j);
-     pad[i][j] = (TPad*) gROOT->FindObject(pname);
-     pad[i][j]->Draw();
-     pad[i][j]->SetLogy();
-     pad[i][j]->SetFillStyle(4000);
-     pad[i][j]->SetFrameFillStyle(4000);
-     pad[i][j]->cd();
-     // Size factors
-     Float_t xFactor = pad[0][0]->GetAbsWNDC()/pad[i][j]->GetAbsWNDC();
-     Float_t yFactor = pad[0][0]->GetAbsHNDC()/pad[i][j]->GetAbsHNDC();
+	thresh1MeV << RealName << ": AV Number " << AVnum << " Imprint Number " << imprNum << std::endl;
+	thresh10MeV << RealName << ": AV Number " << AVnum << " Imprint Number " << imprNum <<  std::endl;
 
-     char hname[60];
-     sprintf(hname,"%s",histoNames[i][j].c_str());
-     std::cout << "Name is: " << hname << std::endl;
-	 TH1F *hFrame = (TH1F*) inFile->Get(hname);
-	 TH1F *hFrame2 = (TH1F*) inFile2->Get(hname);
-     hFrame->SetStats(false); 
-     hFrame->SetFillColor(kBlue);
-     hFrame->SetTitleFont(16);
-     hFrame->SetFillStyle(fillStyle);
-     hFrame->Draw();
+	for(int i = 0; i < Nx; i++){
+	  for(int j = 0; j < Ny; j++){
+		sprintf(histoName,"av_%i_impr_%i_%sLV_pv_%i",AVnum,imprNum,FancyName.c_str(),pvNum);
+		std::cout << "Detector name = " << histoName << std::endl;
 
-	 hFrame2->SetLineColor(kRed);
-	 hFrame2->SetFillStyle(fillStyle);
-	 hFrame2->Draw("same");
+		double Thresholds[10];
+		switch(AVnum){
+		case 1: case 2: case 5: case 6: case 9: case 10:
+		  Thresholds[0] = 1.0; Thresholds[1] = 2.0;
+		  for(int AB = 2; AB < 10; AB++){
+			Thresholds[AB] = Thresholds[AB-1] + 2.0;
+		  }
+		  break;
+		case 3: case 4: case 7: case 8: case 11: case 12: case 13:
+		  Thresholds[0] = 0.5;
+		  for(int AB = 1; AB < 10; AB++){
+			Thresholds[AB] = Thresholds[AB-1] + 0.5;
+		  }
+		  break;
+		default:
+		  break;
+		}
+		
+		// Process the histogram here
+		C1[n]->cd(0);
+		// Get the pads previosly created.
+		char pname1[16];
+		sprintf(pname1,"pad_%i_%i",i,j);
+		pad1[n][i][j] = (TPad*) gROOT->FindObject(pname1);
+		pad1[n][i][j]->Draw();
+		pad1[n][i][j]->SetLogy();
+		pad1[n][i][j]->SetFillStyle(4000);
+		pad1[n][i][j]->SetFrameFillStyle(4000);
+		pad1[n][i][j]->cd();
+		// Size factors
+		Float_t xFactor = pad1[n][0][0]->GetAbsWNDC()/pad1[n][i][j]->GetAbsWNDC();
+		Float_t yFactor = pad1[n][0][0]->GetAbsHNDC()/pad1[n][i][j]->GetAbsHNDC();
 
-     // Set Good Histogram Title
-     avNum = GetAVNumber(hname);
-     imprNum = GetImprNumber(hname);
-     pvNum = GetPlacementNumber(hname);
-     char htitle[80];
-     sprintf(htitle,"#splitline{Energy Deposited}{Front Analyzer %i, Layer %i}",pvNum+1, imprNum);
-     hFrame->SetTitle(htitle);     
-     // y axis range
-     hFrame->GetYaxis()->SetRangeUser(0.2,5e5);
-     
-     // Format for y axis
-     hFrame->GetYaxis()->SetTitle("Events");
-     hFrame->GetYaxis()->SetLabelFont(43);
-     hFrame->GetYaxis()->SetLabelSize(16);
-     hFrame->GetYaxis()->SetLabelOffset(0.02);
-     hFrame->GetYaxis()->SetTitleFont(43);
-     hFrame->GetYaxis()->SetTitleSize(16);
-     hFrame->GetYaxis()->SetTitleOffset(5);  
-     hFrame->GetYaxis()->CenterTitle();
-     hFrame->GetYaxis()->SetNdivisions(505);
-     
-     // TICKS Y Axis
-     hFrame->GetYaxis()->SetTickLength(xFactor*0.04/yFactor);
-     
-     // Format for x axis
-     hFrame->GetXaxis()->SetTitle("Energy Deposited (MeV)");
-     hFrame->GetXaxis()->SetLabelFont(43);
-     hFrame->GetXaxis()->SetLabelSize(16);
-     hFrame->GetXaxis()->SetLabelOffset(0.02);
-     hFrame->GetXaxis()->SetTitleFont(43);
-     hFrame->GetXaxis()->SetTitleSize(16);
-     hFrame->GetXaxis()->SetTitleOffset(3);
-     hFrame->GetXaxis()->CenterTitle();
-     hFrame->GetXaxis()->SetNdivisions(505);
+		// Get the histogram and begin preparing it and placing on the TPad
+		TH1F *hFrame = (TH1F*) inFile->Get(histoName);
+		if(hFrame == NULL){
+		  std::cout << "Histogram is Empty" << std::endl;
+		  txtOut << "Histogram is Empty" << std::endl;
+		  continue;}
+		hFrame->SetStats(false); 
+		hFrame->SetFillColor(kBlue);
+		hFrame->SetTitleFont(16);
+		hFrame->SetFillStyle(fillStyle);
+		hFrame->Draw();
+		// Set Good Histogram Title
+		avNum = GetAVNumber(histoName);
+		imprNum = GetImprNumber(histoName);
+		pvNum = GetPlacementNumber(histoName);
+		char htitle[80];
+		sprintf(htitle,"#splitline{Energy Deposited}{%s %i, Layer %i}",RealName.c_str(),pvNum+1, layerNum);
+		hFrame->SetTitle(htitle);     
+		// y axis range
+		double FirstBinHeight= hFrame->GetBinContent(hFrame->GetMaximumBin());
+		hFrame->GetYaxis()->SetRangeUser(0.2,5.0*FirstBinHeight);
+		
+		// Format for y axis
+		hFrame->GetYaxis()->SetTitle("Events");
+		hFrame->GetYaxis()->SetLabelFont(43);
+		hFrame->GetYaxis()->SetLabelSize(16);
+		hFrame->GetYaxis()->SetLabelOffset(0.02);
+		hFrame->GetYaxis()->SetTitleFont(43);
+		hFrame->GetYaxis()->SetTitleSize(16);
+		hFrame->GetYaxis()->SetTitleOffset(5);  
+		hFrame->GetYaxis()->CenterTitle();
+		hFrame->GetYaxis()->SetNdivisions(505);
+		
+		// TICKS Y Axis
+		hFrame->GetYaxis()->SetTickLength(xFactor*0.04/yFactor);
+		
+		// Format for x axis
+		hFrame->GetXaxis()->SetTitle("Energy Deposited (MeV)");
+		hFrame->GetXaxis()->SetLabelFont(43);
+		hFrame->GetXaxis()->SetLabelSize(16);
+		hFrame->GetXaxis()->SetLabelOffset(0.02);
+		hFrame->GetXaxis()->SetTitleFont(43);
+		hFrame->GetXaxis()->SetTitleSize(16);
+		hFrame->GetXaxis()->SetTitleOffset(3);
+		hFrame->GetXaxis()->CenterTitle();
+		hFrame->GetXaxis()->SetNdivisions(505);
+		
+		// Set X axis range
+		hFrame->GetXaxis()->SetRangeUser(0.012,20.0);
+		
+		// TICKS X Axis
+		hFrame->GetXaxis()->SetTickLength(yFactor*0.06/xFactor);
+		
+		// This loop computes the thresholds and prints them to the screen.
+		// This is needed for the second canvas
+		int nBins = hFrame->GetNbinsX();
+		double binWidth = hFrame->GetXaxis()->GetBinWidth(10);
+		double largestY = 0.0, smallestY = 100000.0;
+		double largestY2 = 0.0, smallestY2 = 10000.0;
+		Double_t x[nThresh], y[nThresh], x2[nThresh], y2[nThresh];
+		txtOut << RealName << ": AV Number " << AVnum << " Imprint Number " << imprNum << 
+		  "  PV Number " << pvNum << std::endl;
+		for(int k = 0; k < nThresh; k++){
+		  double Threshold = Thresholds[k];
+		  DetCounts[i][j] = hFrame->Integral((Threshold/binWidth),nBins);    
+		  CountRates[k][i][j] = DetCounts[i][j]/electronTime/(1e3);
+		  std::cout << "Threshold = " << Thresholds[k] << " MeV" << std::endl;
+		  cout << RealName << ", detector # " << pvNum << " counts/s for 1 microAmp of Beam " 
+			   << CountRates[k][i][j] << " kHz" << endl;
+		  cout << RealName << ", detector # " << pvNum << " counts/s for 80 microAmp of Beam " 
+			   << 80*CountRates[k][i][j] << " kHz" << endl;    
+		  cout << " " << endl;
+		  // THis creates the x,y vectors for TGraph later on
+		  x[k] = Thresholds[k];
+		  y[k] = CountRates[k][i][j]; // scaled to 1 uA beam and 1 MHz
+		  if(y[k] > largestY) largestY = y[k];
+		  if(y[k] < smallestY) smallestY = y[k];
+		  
+		  x2[k] = Thresholds[k];
+		  y2[k] = DetCounts[i][j]; // scaled to 1 uA beam and 1 MHz
+		  if(y2[k] > largestY2) largestY2 = y2[k];
+		  if(y2[k] < smallestY2) smallestY2 = y2[k];
+		  
+		  // Output to text file for getting the numbers 
+		  txtOut << Thresholds[k] << "      " << 
+			DetCounts[i][j] << " Counts" << "      " << 
+			CountRates[k][i][j] << " kHz" <<std::endl;
 
-     // Set X axis range
-     hFrame->GetXaxis()->SetRangeUser(0.012,20.0);
+		  if(Thresholds[k] == 1){
+			thresh1MeV << pvNum << "      " << Thresholds[k] << "      " << 
+			DetCounts[i][j] << " Counts" << "      " << 
+			CountRates[k][i][j] << " kHz" <<std::endl;
+		  } else if(Thresholds[k] == 10){
+			thresh10MeV << pvNum  << "      " << Thresholds[k] << "      " << 
+			DetCounts[i][j] << " Counts" << "      " << 
+			CountRates[k][i][j] << " kHz" <<std::endl;
+		  }
+		}
+		txtOut << std::endl;
 
-     // TICKS X Axis
-     hFrame->GetXaxis()->SetTickLength(yFactor*0.06/xFactor);
-     
-	 TLegend *legend2 = new TLegend(0.7,0.7,0.9,0.8);
-	 legend2->AddEntry(hFrame, PType1 + " Particles, 4.3 T m ","lp");
-	 legend2->AddEntry(hFrame2, PType2 + " Particles, 1.0 T m ","lp");
-	 legend2->Draw();
+		// Plot the threshold data!	
+		C2[n]->cd(0);
+		char pname2[16];
+		sprintf(pname2,"pad_%i_%i",i,j);
+		pad2[n][i][j] = (TPad*) gROOT->FindObject(pname2);
+		pad2[n][i][j]->Draw();     
+		pad2[n][i][j]->SetLogy();
+		pad2[n][i][j]->cd();
 
-     // Count up events in Front layer of taggers above Threshold
-     int nBins = hFrame->GetNbinsX();
-     double binWidth = hFrame->GetXaxis()->GetBinWidth(10);
-     
+		//  Generate the graph and format it ... somewhat nicely
+		TGraph *gr = new TGraph(nThresh,x,y); 
+		char gtitle[90];
+		sprintf(gtitle,"#splitline{Count Rate VS. Threshold}{%s %i, Layer %i}",
+				RealName.c_str(),pvNum+1, layerNum);
+		gr->SetTitle(gtitle);   
 
-     for(int k = 0; k < nThresh; k++){
-       double Threshold = Thresholds[k];
-	   std::cout << "Current Threshold = " << Threshold << " MeV" << std::endl;
+		// Clean up Y axis
+		gr->GetYaxis()->SetTitle("Count Rate at 1 #muA Beam (kHz)");   
+		gr->GetYaxis()->SetLabelFont(43);
+		gr->GetYaxis()->SetLabelSize(16);
+		gr->GetYaxis()->SetLabelOffset(0.02);
+		gr->GetYaxis()->SetTitleFont(43);
+		gr->GetYaxis()->SetTitleSize(16);
+		gr->GetYaxis()->SetTitleOffset(5);
+		gr->GetYaxis()->CenterTitle(); 
+		gr->SetMinimum(0.6*smallestY);
+		gr->SetMaximum(2*largestY);
+		//gr->Fit("expo","FQ");
+		//gr->SetLineColor(4);
+		//gr->GetFunction("expo")->SetLineColor(4);
+		// Clean up X axis
+		gr->GetXaxis()->SetTitle("Threshold Energy (MeV)");
+		gr->GetXaxis()->SetLabelFont(43);
+		gr->GetXaxis()->SetLabelSize(16);
+		gr->GetXaxis()->SetLabelOffset(0.02);
+		gr->GetXaxis()->SetTitleFont(43);
+		gr->GetXaxis()->SetTitleSize(16);
+		gr->GetXaxis()->SetTitleOffset(3);
+		gr->GetXaxis()->CenterTitle();
+		
+		// Go for the plot
+		gr->SetMarkerStyle(21);
+		gr->Draw("APC");
+		
+		C3[n]->cd(0);
+		char pname3[16];
+		sprintf(pname3,"pad_%i_%i",i,j);
+		pad3[n][i][j] = (TPad*) gROOT->FindObject(pname3);
+		pad3[n][i][j]->Draw();     
+		pad3[n][i][j]->SetLogy();
+		pad3[n][i][j]->cd();
 
-       CTagger[i][j] = hFrame->Integral((Threshold/binWidth),nBins);
-	   CTagger2[i][j] = hFrame2->Integral((Threshold/binWidth),nBins);
+		//  Generate the graph and format it ... somewhat nicely
+		TGraph *gr2 = new TGraph(nThresh,x2,y2); 
+		//char gtitle[90];
+		sprintf(gtitle,"#splitline{Detector Counts VS. Threshold}{%s %i, Layer %i}",
+				RealName.c_str(),pvNum+1, layerNum);
+		gr2->SetTitle(gtitle);   
 
-       CountRates[k][i][j] = CTagger[i][j]/electronTime/(1e6);
-	   CountRates2[k][i][j] = CTagger2[i][j]/electronTime/(1e6);
-       
-	   cout << "First Analyzer layer, detector " << pvNum << " counts/s for 1 microAmp of Beam " 
-	    << CountRates[k][i][j] << " kHz" << endl;
-       cout << "First Analyzer layer, detector " << pvNum << " counts/s for 80 microAmp of Beam " 
-	    << 80*CountRates[k][i][j]<< " kHz" << endl;    
-       cout << " " << endl;
-     }
+		// Clean up Y axis
+		gr2->GetYaxis()->SetTitle("Total Counts at 1 #muA Beam (Counts)");   
+		gr2->GetYaxis()->SetLabelFont(43);
+		gr2->GetYaxis()->SetLabelSize(16);
+		gr2->GetYaxis()->SetLabelOffset(0.02);
+		gr2->GetYaxis()->SetTitleFont(43);
+		gr2->GetYaxis()->SetTitleSize(16);
+		gr2->GetYaxis()->SetTitleOffset(5);
+		gr2->GetYaxis()->CenterTitle(); 
+		gr2->SetMinimum(0.6*smallestY2);
+		gr2->SetMaximum(2*largestY2);
+		//gr2->Fit("expo","FQ");
+		//gr2->SetLineColor(4);
+		//gr2->GetFunction("expo")->SetLineColor(4);
+		// Clean up X axis
+		gr2->GetXaxis()->SetTitle("Threshold Energy (MeV)");
+		gr2->GetXaxis()->SetLabelFont(43);
+		gr2->GetXaxis()->SetLabelSize(16);
+		gr2->GetXaxis()->SetLabelOffset(0.02);
+		gr2->GetXaxis()->SetTitleFont(43);
+		gr2->GetXaxis()->SetTitleSize(16);
+		gr2->GetXaxis()->SetTitleOffset(3);
+		gr2->GetXaxis()->CenterTitle();
+		
+		// Go for the plot
+		gr2->SetMarkerStyle(21);
+		gr2->Draw("APC");
 
-	 Double_t x[nThresh], y[nThresh], x2[nThresh], y2[nThresh], ratiox[nThresh], ratioy[nThresh];
-     c2->cd(0);
-     char pname2[16];
-     sprintf(pname2,"pad_%i_%i",i,j);
-     pad1[i][j] = (TPad*) gROOT->FindObject(pname2);
-     pad1[i][j]->Draw(); 
-	 pad1[i][j]->SetLogy();
-     pad1[i][j]->cd();
-     for(int k = 0; k < nThresh; k++){
-       x[k] = Thresholds[k];
-       y[k] = CountRates[k][i][j];
-	   x2[k] = Thresholds[k];
-       y2[k] = CountRates2[k][i][j];
-	   ratiox[k] = Thresholds[k];
-	   ratioy[k] = y2[k]/y[k];
-     }
-	 
-     TGraph *gr = new TGraph(nThresh,x,y); 
-	 TGraph *gr2 = new TGraph(nThresh,x2,y2);
-     // Set Good Graph Title
-
-     sprintf(htitle,"#splitline{Count Rates}{Front Analyzer %i, Layer %i}",pvNum+1, imprNum);
-     // Go for the plot
-     gr->SetMarkerStyle(21);
-	 gr->SetMarkerColor(4); 
-	 gr2->SetMarkerStyle(22);
-	 gr2->SetMarkerColor(2);
-     //gr->Draw("APC");
-
-	 TMultiGraph *mg = new TMultiGraph();
-	 /*TF1 *myFunc = new TF1("myFunc", "[0]+[1]*x+[2]*x^2+[3]*x^3+[4]*x^4",0.5,16);
-	 myFunc->SetParameter(0,10);
-	 myFunc->SetParameter(1,-0.25);
-	 myFunc->SetParameter(2,0.5);
-	 myFunc->SetParameter(3,-0.05);
-	 myFunc->SetParameter(4,0.1);
-	 //myFunc->SetParameter(5,-0.0005);*/
-	 gr->Fit("expo","FQ");
-	 gr->SetLineColor(4);
-	 gr->GetFunction("expo")->SetLineColor(4);
-	 mg->Add(gr,"p");
-	 gr2->SetLineColor(2);
-	 gr2->Fit("expo","FQ");
-	 gr2->GetFunction("expo")->SetLineColor(2);
-	 mg->Add(gr2,"p");
-	 mg->Draw("a");
-
-	 mg->SetTitle(htitle);
-	 mg->GetYaxis()->SetTitle("Count Rate at 1 #muA Beam (kHz)");
-	 mg->GetYaxis()->CenterTitle();
-	 mg->GetYaxis()->SetLabelOffset(0.02);    
-	 mg->GetYaxis()->SetTitleFont(43);
-     mg->GetYaxis()->SetTitleSize(16);
-     mg->GetYaxis()->SetTitleOffset(5); 
-	 mg->GetYaxis()->SetRangeUser(y2min,y2max);
-
-	 mg->GetXaxis()->SetTitle("Threshold Energy (MeV)"); 
-	 mg->GetXaxis()->CenterTitle();
-	 mg->GetXaxis()->SetLabelOffset(0.02);	
-	 mg->GetXaxis()->SetTitleFont(43);
-     mg->GetXaxis()->SetTitleSize(16);
-     mg->GetXaxis()->SetTitleOffset(3);
-	 mg->GetXaxis()->SetLabelFont(43);
-	 mg->GetXaxis()->SetLabelSize(16);
-
-	 TLegend *legend = new TLegend(0.7,0.7,0.9,0.8);
-	 legend->AddEntry(gr, PType1 + " Particles, 4.3 T m ","lp");
-	 legend->AddEntry(gr2, PType2 + " Particles, 1.0 T m ","lp");
-	 legend->Draw();
-
-	 pad1[i][j]->Modified();
-
-	 c3->cd(0);
-	 // Get the pads previosly created.
-     char pname3[16];
-     sprintf(pname3,"pad_%i_%i",i,j);
-     pad2[i][j] = (TPad*) gROOT->FindObject(pname3);
-     pad2[i][j]->Draw();
-	 pad2[i][j]->SetFillStyle(4000);
-     pad2[i][j]->SetFrameFillStyle(4000);
-     pad2[i][j]->cd();
-     // Size factors
-	 xFactor = pad2[0][0]->GetAbsWNDC()/pad[i][j]->GetAbsWNDC();
-	 yFactor = pad2[0][0]->GetAbsHNDC()/pad[i][j]->GetAbsHNDC();
-
-     TGraph *gr3 = new TGraph(nThresh,ratiox,ratioy); 
-	 // Set Good Graph Title
-
-     sprintf(htitle,"#splitline{Ratio of Count Rates}{Front Analyzer %i, Layer %i}",pvNum+1, imprNum);
-     // Go for the plot
-     gr3->SetMarkerStyle(21);
-	 gr3->SetMarkerColor(4); 
-
-	 TMultiGraph *mg2 = new TMultiGraph();
-	 gr3->Fit("pol1","FQ");
-	 gr3->SetLineColor(4);
-	 gr3->GetFunction("pol1")->SetLineColor(4);
-	 mg2->Add(gr3,"p");
-	 mg2->Draw("a");
-
-	 mg2->SetTitle(htitle);
-	 mg2->GetYaxis()->SetTitle("Ratio of " + PType2 + " to " + PType1 + " Particle Count Rate");
-	 mg2->GetYaxis()->CenterTitle();
-	 mg2->GetYaxis()->SetLabelOffset(0.02);    
-	 mg2->GetYaxis()->SetTitleFont(43);
-     mg2->GetYaxis()->SetTitleSize(16);
-     mg2->GetYaxis()->SetTitleOffset(5);  
-	 mg2->GetYaxis()->SetLabelFont(43);
-	 mg2->GetYaxis()->SetLabelSize(16);
-	 //mg2->GetYaxis()->SetRangeUser(0.04,0.75);
-	 mg2->GetYaxis()->SetRangeUser(y3min,y3max);
-
-	 mg2->GetXaxis()->SetTitle("Threshold Energy (MeV)"); 
-	 mg2->GetXaxis()->CenterTitle();
-	 mg2->GetXaxis()->SetLabelOffset(0.02);	
-	 mg2->GetXaxis()->SetTitleFont(43);
-     mg2->GetXaxis()->SetTitleSize(16);
-     mg2->GetXaxis()->SetTitleOffset(3);
-	 mg2->GetXaxis()->SetLabelFont(43);
-	 mg2->GetXaxis()->SetLabelSize(16);
-
-	 //TLegend *legend3 = new TLegend(0.2,0.3,0.3,0.35);
-	 //legend3->AddEntry(gr3, "1 Tm / 4 Tm Ratio","lp");
-	 //legend3->Draw();
-
-	 pad2[i][j]->Modified();
-   }
+		// Cycle the Physical Volume number and check if you are at the end of a row.
+		// If so, increase imprint number by 1 and break the loop otherwise continue
+		pvNum++;
+		if(pvNum == PVnumMax) { imprNum++; break; }
+	  }
+	}
+	// Check imprNum against max allowed; cycle to next detector if greater than max
+	if(imprNum > ImprNumMax) { imprNum = 1; continue; }
   }
   
-  c1->Write();
-  c2->Write();
+  for(int i = 0; i < 22; i++){
+	C1[i]->Write();
+	C2[i]->Write();
+	C3[i]->Write();
+  }
+  txtOut.close();
+  thresh1MeV.close();
+  thresh10MeV.close();
   outFile->Close(); 
   //inFile->Close();
 
 }
-
 
 void CanvasPartition(TCanvas *C,const Int_t Nx,const Int_t Ny,
                      Float_t lMargin, Float_t rMargin,
@@ -351,23 +370,23 @@ void CanvasPartition(TCanvas *C,const Int_t Nx,const Int_t Ny,
    for (Int_t i=0;i<Nx;i++) {
 
       if (i==0) {
-         hposl = 0.0;
+         hposl = 0.03;
          hposr = lMargin + hStep;
          hfactor = hposr-hposl;
          hmarl = lMargin / hfactor;
-         hmarr = 0.0;
+         hmarr = 0.05;
       } else if (i == Nx-1) {
          hposl = hposr + hSpacing;
          hposr = hposl + hStep + rMargin;
          hfactor = hposr-hposl;
-         hmarl = 0.0;
+         hmarl = 0.20;
          hmarr = rMargin / (hposr-hposl);
       } else {
          hposl = hposr + hSpacing;
          hposr = hposl + hStep;
          hfactor = hposr-hposl;
-         hmarl = 0.0;
-         hmarr = 0.0;
+         hmarl = 0.20;
+         hmarr = 0.05;
       }
 
       for (Int_t j=0;j<Ny;j++) {
@@ -402,8 +421,8 @@ void CanvasPartition(TCanvas *C,const Int_t Nx,const Int_t Ny,
          pad->SetLeftMargin(hmarl);
          pad->SetRightMargin(hmarr);
          pad->SetBottomMargin(vmard);
-	 pad->SetTopMargin(vmaru);
-
+		 pad->SetTopMargin(vmaru);
+	 
          pad->SetFrameBorderMode(0);
          pad->SetBorderMode(0);
          pad->SetBorderSize(0);
@@ -442,16 +461,16 @@ int GetPlacementNumber(const std::string &volName) {
     return 0;
 }
 
-/*TString FormInputFile(TString InputDir){
+TString FormInputFile(TString InputDir){
   
-  TString fileName = InputDir + "/histos/" + BaseName + "_Histos.root";
+  TString fileName = InputDir + "/histos/" + BaseName + "_NpolEff.root";
   
   return fileName;
 }
 
 TString FormOutputFile(TString OutputDir){
   
-  TString fileName =  OutputDir + "/Plots/" + BaseName + "_FrontTaggerRates.root";
+  TString fileName =  OutputDir + "/Plots/" + BaseName + "_NpolRates.root";
   
   return fileName;
 }
@@ -507,5 +526,51 @@ void RetrieveENVvariables() {
 	std::cout << "Input Directory environmental varilable not set" << std::endl;
 	return;
   }
-  }*/
+}
 
+// This method returns a set of values (av, pvMax imprintMax, names) for each 'n'
+// value that is cycled through in the main program.  It's a poor man's decoder
+// to be honest.
+void GetCanvasParameters(int n){
+  ImprNumMax = 2;
+  if(n == 0 || n == 1 || n == 2 || n == 3){
+	if(n == 0 || n == 1){ AVnum = 1; PVnumMax = 13; }
+	if(n == 2 || n == 3){ AVnum = 2; PVnumMax = 14; }
+	FancyName = "TopDet"; RealName = "Top Detector";
+	layerNum = 1;
+  } else if(n == 6 || n == 7 || n == 8 || n == 9){
+	if(n == 6 || n == 7){ AVnum = 5; PVnumMax = 13; }
+	if(n == 8 || n == 9){ AVnum = 6; PVnumMax = 14; }
+	FancyName = "BottomDet"; RealName = "Bottom Detector";
+	layerNum = 1;
+  } else if(n == 4 || n == 5){
+	ImprNumMax = 1;
+	if(n == 4){ AVnum = 3; PVnumMax = 13; }
+	if(n == 5){ AVnum = 4; PVnumMax = 14; }
+	FancyName = "TopVeto"; RealName = "Top Veto";
+	layerNum = 1;
+  } else if(n == 10 || n ==11){
+	ImprNumMax = 1;
+	if(n == 10){ AVnum = 7; PVnumMax = 13; }
+	if(n == 11){ AVnum = 8; PVnumMax = 14; }
+	FancyName = "BottomVeto"; RealName = "Bottom Veto";
+	layerNum = 1;
+  } else if(n == 12 || n == 13 || n == 14 || n == 15){
+	if(n == 12){ AVnum = 9; PVnumMax = 6; layerNum = 1;}
+	if(n == 13){ AVnum = 9; PVnumMax = 6; layerNum = 2;}
+	if(n == 14){ AVnum = 10; PVnumMax = 8; layerNum = 3;}
+	if(n == 15){ AVnum = 10; PVnumMax = 8; layerNum = 4;}
+	FancyName = "FrontDet"; RealName = "Front Detector";
+  } else if(n == 16 || n == 17 || n == 18 || n == 19){
+	if(n == 16){ AVnum = 11; PVnumMax = 6; layerNum = 1; }
+	if(n == 17){ AVnum = 11; PVnumMax = 6; layerNum = 2; }
+	if(n == 18){ AVnum = 12; PVnumMax = 8; layerNum = 3; }
+	if(n == 19){ AVnum = 12; PVnumMax = 8; layerNum = 4; }
+	FancyName = "FrontVeto"; RealName = "Front Veto";
+  } else if(n == 20 || n == 21){
+	if(n == 20){ AVnum = 13; PVnumMax = 16; layerNum = 1; }
+	if(n == 21){ AVnum = 13; PVnumMax = 16; layerNum = 2; }
+	FancyName = "BackTag"; RealName = "Back Tagger";
+  }
+  return;
+}
