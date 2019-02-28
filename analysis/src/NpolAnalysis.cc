@@ -84,10 +84,10 @@ int main(int argc, char *argv[]) {
   //********************************* Define your Histograms Here *******************************
 
   //    1D-Histograms
-  HistoMan->CreateHistograms("Analyzer","Analyzer hit counts",34,20099,21033);
-  HistoMan->CreateHistograms("HCAL","HCAL hit counts",290,11000,11289); 
-  HistoMan->CreateHistograms("LeftHodo","Left Hodoscope hit counts",26,60099,61025);
-  HistoMan->CreateHistograms("RightHodo","Right Hodoscope hit counts",26,70099,71025);
+  HistoMan->CreateHistograms("Analyzer","Analyzer hit counts",34,20999,21033);
+  HistoMan->CreateHistograms("HCAL","HCAL hit counts",290,10999,11289); 
+  HistoMan->CreateHistograms("LeftHodo","Left Hodoscope hit counts",26,60999,61025);
+  HistoMan->CreateHistograms("RightHodo","Right Hodoscope hit counts",26,70999,71025);
 
   for(int i = 0; i < 288; i++){
 	std::string hName = "HCAL_Edep_" + std::to_string(i+1);
