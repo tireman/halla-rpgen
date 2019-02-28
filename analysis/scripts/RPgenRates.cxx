@@ -36,7 +36,7 @@ TString FormOutputFile(TString OutputDir);
 void RetrieveENVvariables();
 void GetCanvasParameters(int n);
 
-int PVnumMax = 0, AVnum = 1, ImprNumMax = 2, layerNum = 1;
+int PVnumMax = 0, AVnum = 1, pvNum = 0, CanvasNumMax = 2, layerNum = 1, Nx = 16, Ny = 2;
 TString BaseName = "";  TString JobNum = "";  TString Lead = ""; TString Energy = ""; 
 TString Bfield = ""; TString OutputDir = ""; TString InputDir = "";
 std::string FancyName = ""; std::string RealName = "";
@@ -58,8 +58,8 @@ void RPgenRates() {
   std::cout << "Electron beam time at 1 micro-amp is " << electronTime << " s " << std::endl;
   std::cout << "Total electrons on target: " << totalElectrons/1e9 << " Billion" << std::endl;
 
-  int pvNum = 1, avNum = 1, imprNum = 1;
-  Int_t Nx = 16, Ny = 2, nThresh = 10, fillStyle = 1001;
+  int avNum = 1, canvasNum = 1;
+  Int_t nThresh = 10, fillStyle = 1001;
   Float_t lMargin = 0.05, rMargin = 0.05, bMargin = 0.10, tMargin = 0.05;
   Float_t vSpacing = 0.0; Float_t hSpacing = 0.0;
   double DetCounts[Nx][Ny];
@@ -80,18 +80,17 @@ void RPgenRates() {
   // There are currently 22 of them.  Loop over 'i' and 'j' fill the canvases with the 
   // individual plots.  
   //*****************************************************************************************
-
-  TCanvas *C1[22], *C2[22], *C3[22];
-  TPad *pad1[22][7][2]; TPad *pad2[22][7][2]; TPad *pad3[22][7][2];
+  Int_t NumCanvas = 35;
+  TCanvas *C1[NumCanvas], *C2[NumCanvas], *C3[NumCanvas];
+  TPad *pad1[NumCanvas][7][2]; TPad *pad2[NumCanvas][7][2]; TPad *pad3[NumCanvas][7][2];
   char histoName[60], tempName[9], tempName2[8], tempName3[9]; 
-  for(int n = 0; n < 22; n++){	
-	pvNum = 0;
+  for(int n = 1; n < 36; n++){	
+	canvasNum = 1;
 	GetCanvasParameters(n);
-	if(PVnumMax == 13){ Nx = 7; } else { Nx = PVnumMax/2; }
 	sprintf(tempName,"canvas%i",n);
 	sprintf(tempName2,"graph%i",n);
 	sprintf(tempName3,"Counts%i",n);
-	C1[n]= new TCanvas(tempName,"Energy Plots at Polarimeter Angle 28.0 Deg, E = 4.4 GeV",1500,900);
+	C1[n]= new TCanvas(tempName,"Energy Plots at Polarimeter Angle 24.7 Deg, E = 4.4 GeV",1500,900);
 	C2[n]= new TCanvas(tempName2,"Count Rate vs. Threshold plots",1500,900);
 	C3[n]= new TCanvas(tempName3,"Counts vs. Threshold plots",1500,900);
 	
@@ -99,23 +98,23 @@ void RPgenRates() {
 	CanvasPartition(C2[n],Nx,Ny,lMargin,rMargin,bMargin,tMargin,vSpacing,hSpacing);
 	CanvasPartition(C3[n],Nx,Ny,lMargin,rMargin,bMargin,tMargin,vSpacing,hSpacing);
 
-	thresh1MeV << RealName << ": AV Number " << AVnum << " Imprint Number " << imprNum << std::endl;
-	thresh10MeV << RealName << ": AV Number " << AVnum << " Imprint Number " << imprNum <<  std::endl;
+	thresh1MeV << RealName << ": AV Number " << AVnum << " Group Number " << canvasNum << std::endl;
+	thresh10MeV << RealName << ": AV Number " << AVnum << " Group Number " << canvasNum <<  std::endl;
 
 	for(int i = 0; i < Nx; i++){
 	  for(int j = 0; j < Ny; j++){
-		sprintf(histoName,"av_%i_impr_%i_%sLV_pv_%i",AVnum,imprNum,FancyName.c_str(),pvNum);
+		sprintf(histoName,"%s_Edep_%i",FancyName.c_str(),pvNum+1);
 		std::cout << "Detector name = " << histoName << std::endl;
 
 		double Thresholds[10];
 		switch(AVnum){
-		case 1: case 2: case 5: case 6: case 9: case 10:
+		case 1: 
 		  Thresholds[0] = 1.0; Thresholds[1] = 2.0;
 		  for(int AB = 2; AB < 10; AB++){
 			Thresholds[AB] = Thresholds[AB-1] + 2.0;
 		  }
 		  break;
-		case 3: case 4: case 7: case 8: case 11: case 12: case 13:
+		case 2: case 3: case 4: case 5: case 6: case 7: 
 		  Thresholds[0] = 0.5;
 		  for(int AB = 1; AB < 10; AB++){
 			Thresholds[AB] = Thresholds[AB-1] + 0.5;
@@ -152,9 +151,6 @@ void RPgenRates() {
 		hFrame->SetFillStyle(fillStyle);
 		hFrame->Draw();
 		// Set Good Histogram Title
-		avNum = GetAVNumber(histoName);
-		imprNum = GetImprNumber(histoName);
-		pvNum = GetPlacementNumber(histoName);
 		char htitle[80];
 		sprintf(htitle,"#splitline{Energy Deposited}{%s %i, Layer %i}",RealName.c_str(),pvNum+1, layerNum);
 		hFrame->SetTitle(htitle);     
@@ -200,17 +196,17 @@ void RPgenRates() {
 		double largestY = 0.0, smallestY = 100000.0;
 		double largestY2 = 0.0, smallestY2 = 10000.0;
 		Double_t x[nThresh], y[nThresh], x2[nThresh], y2[nThresh];
-		txtOut << RealName << ": AV Number " << AVnum << " Imprint Number " << imprNum << 
-		  "  PV Number " << pvNum << std::endl;
+		txtOut << RealName << ": AV Number " << AVnum << " Group Number " << canvasNum << 
+		  "  PV Number " << pvNum+1 << std::endl;
 		for(int k = 0; k < nThresh; k++){
 		  double Threshold = Thresholds[k];
 		  DetCounts[i][j] = hFrame->Integral((Threshold/binWidth),nBins);    
 		  CountRates[k][i][j] = DetCounts[i][j]/electronTime/(1e3);
 		  std::cout << "Threshold = " << Thresholds[k] << " MeV" << std::endl;
-		  cout << RealName << ", detector # " << pvNum << " counts/s for 1 microAmp of Beam " 
+		  cout << RealName << ", detector # " << pvNum+1 << " counts/s for 1 microAmp of Beam " 
 			   << CountRates[k][i][j] << " kHz" << endl;
-		  cout << RealName << ", detector # " << pvNum << " counts/s for 80 microAmp of Beam " 
-			   << 80*CountRates[k][i][j] << " kHz" << endl;    
+		  cout << RealName << ", detector # " << pvNum+1 << " counts/s for 40 microAmp of Beam " 
+			   << 40*CountRates[k][i][j] << " kHz" << endl;    
 		  cout << " " << endl;
 		  // THis creates the x,y vectors for TGraph later on
 		  x[k] = Thresholds[k];
@@ -229,12 +225,10 @@ void RPgenRates() {
 			CountRates[k][i][j] << " kHz" <<std::endl;
 
 		  if(Thresholds[k] == 1){
-			thresh1MeV << pvNum << "      " << Thresholds[k] << "      " << 
-			DetCounts[i][j] << " Counts" << "      " << 
+			thresh1MeV << pvNum << "      " << DetCounts[i][j] << " Counts" << "      " << 
 			CountRates[k][i][j] << " kHz" <<std::endl;
 		  } else if(Thresholds[k] == 10){
-			thresh10MeV << pvNum  << "      " << Thresholds[k] << "      " << 
-			DetCounts[i][j] << " Counts" << "      " << 
+			thresh10MeV << pvNum  << "      " << DetCounts[i][j] << " Counts" << "      " << 
 			CountRates[k][i][j] << " kHz" <<std::endl;
 		  }
 		}
@@ -283,7 +277,7 @@ void RPgenRates() {
 		// Go for the plot
 		gr->SetMarkerStyle(21);
 		gr->Draw("APC");
-		
+	
 		C3[n]->cd(0);
 		char pname3[16];
 		sprintf(pname3,"pad_%i_%i",i,j);
@@ -330,24 +324,103 @@ void RPgenRates() {
 		// Cycle the Physical Volume number and check if you are at the end of a row.
 		// If so, increase imprint number by 1 and break the loop otherwise continue
 		pvNum++;
-		if(pvNum == PVnumMax) { imprNum++; break; }
+		if(pvNum == PVnumMax) { canvasNum++; layerNum++; break; }
 	  }
 	}
-	// Check imprNum against max allowed; cycle to next detector if greater than max
-	if(imprNum > ImprNumMax) { imprNum = 1; continue; }
+	// Check canvasNum against max allowed; cycle to next detector if greater than max
+	if(canvasNum > CanvasNumMax) {
+	  canvasNum = 1; 
+	  C1[n]->Write(); C1[n]->Close();
+	  C2[n]->Write(); C2[n]->Close();
+	  C3[n]->Write(); C3[n]->Close();
+	  continue;
+	} else {
+	  C1[n]->Write(); C1[n]->Close();
+	  C2[n]->Write(); C2[n]->Close();
+	  C3[n]->Write(); C3[n]->Close();
+	}
   }
   
-  for(int i = 0; i < 22; i++){
-	C1[i]->Write();
-	C2[i]->Write();
-	C3[i]->Write();
-  }
   txtOut.close();
   thresh1MeV.close();
   thresh10MeV.close();
   outFile->Close(); 
   //inFile->Close();
 
+}
+
+// This method returns a set of values (av, pvMax imprintMax, names) for each 'n'
+// value that is cycled through in the main program.  It's a poor man's decoder
+// to be honest.
+void GetCanvasParameters(int n){
+
+  if((n >= 1) && (n <=24)){
+	PVnumMax = 12;
+	CanvasNumMax = 24;
+	Nx = 6; Ny = 2;
+	AVnum = 1; layerNum = 1;
+	pvNum = (n-1)*12;
+	FancyName = "HCAL"; RealName = "HCal Detector";
+  } else if ((n == 25) || (n == 26)){
+	PVnumMax = 16;
+	CanvasNumMax = 2;
+	Nx = 4; Ny = 4;
+	AVnum = 2; layerNum = 1;
+	pvNum = (n-25)*16;
+	FancyName = "Analyzer"; RealName = "Analyzer Detector";
+  } else if ((n == 27) || (n == 28)){
+	PVnumMax = 12;
+	CanvasNumMax = 2;
+	Nx = 4; Ny = 3;
+	AVnum = 6; layerNum = 1;
+	pvNum = (n-27)*12;
+	FancyName = "LHodo"; RealName = "Left Hodoscope Detector";
+  } else if ((n == 29) || (n == 30)){
+	PVnumMax = 12;
+	CanvasNumMax = 2;
+	Nx = 4; Ny = 3;
+	AVnum = 7; layerNum = 1;
+	pvNum = (n-29)*12;
+	FancyName = "RHodo"; RealName = "Right Hodoscope Detector";
+  }else if (n == 31){
+	PVnumMax = 2;
+	CanvasNumMax = 1;
+	Nx = 2; Ny = 1;
+	AVnum = 3; layerNum = 1;
+	pvNum = (n-31)*2;
+	FancyName = "INFN_Front"; RealName = "INFN Front Detector";
+  } else if (n == 32){
+	PVnumMax = 2;
+	CanvasNumMax = 1;
+	Nx = 2; Ny = 1;
+	AVnum = 4; layerNum = 1;
+	pvNum = (n-32)*2;
+	FancyName = "UVA_Front"; RealName = "UVA Front Detector";
+  } else if (n == 33){
+	PVnumMax = 4;
+	CanvasNumMax = 1;
+	Nx = 2; Ny = 2;
+	AVnum = 4; layerNum = 1;
+	pvNum = (n-33)*4;
+	FancyName = "UVA_Rear"; RealName = "UVA Rear Detector";
+  } else if (n == 34){
+	PVnumMax = 2;
+	CanvasNumMax = 1;
+	Nx = 2; Ny = 1;
+	AVnum = 5; layerNum = 1;
+	pvNum = (n-34)*2;
+	FancyName = "UVA_LeftWing"; RealName = "UVA Left Wing Detector";
+  } else if (n == 35){
+	PVnumMax = 2;
+	CanvasNumMax = 1;
+	Nx = 2; Ny = 1;
+	AVnum = 5; layerNum = 1;
+	pvNum = (n-35)*2;
+	FancyName = "UVA_RightWing"; RealName = "UVA Right Wing Detector";
+  }
+
+  
+  return;
 }
 
 void CanvasPartition(TCanvas *C,const Int_t Nx,const Int_t Ny,
@@ -528,49 +601,7 @@ void RetrieveENVvariables() {
   }
 }
 
-// This method returns a set of values (av, pvMax imprintMax, names) for each 'n'
-// value that is cycled through in the main program.  It's a poor man's decoder
-// to be honest.
-void GetCanvasParameters(int n){
-  ImprNumMax = 2;
-  if(n == 0 || n == 1 || n == 2 || n == 3){
-	if(n == 0 || n == 1){ AVnum = 1; PVnumMax = 13; }
-	if(n == 2 || n == 3){ AVnum = 2; PVnumMax = 14; }
-	FancyName = "TopDet"; RealName = "Top Detector";
-	layerNum = 1;
-  } else if(n == 6 || n == 7 || n == 8 || n == 9){
-	if(n == 6 || n == 7){ AVnum = 5; PVnumMax = 13; }
-	if(n == 8 || n == 9){ AVnum = 6; PVnumMax = 14; }
-	FancyName = "BottomDet"; RealName = "Bottom Detector";
-	layerNum = 1;
-  } else if(n == 4 || n == 5){
-	ImprNumMax = 1;
-	if(n == 4){ AVnum = 3; PVnumMax = 13; }
-	if(n == 5){ AVnum = 4; PVnumMax = 14; }
-	FancyName = "TopVeto"; RealName = "Top Veto";
-	layerNum = 1;
-  } else if(n == 10 || n ==11){
-	ImprNumMax = 1;
-	if(n == 10){ AVnum = 7; PVnumMax = 13; }
-	if(n == 11){ AVnum = 8; PVnumMax = 14; }
-	FancyName = "BottomVeto"; RealName = "Bottom Veto";
-	layerNum = 1;
-  } else if(n == 12 || n == 13 || n == 14 || n == 15){
-	if(n == 12){ AVnum = 9; PVnumMax = 6; layerNum = 1;}
-	if(n == 13){ AVnum = 9; PVnumMax = 6; layerNum = 2;}
-	if(n == 14){ AVnum = 10; PVnumMax = 8; layerNum = 3;}
-	if(n == 15){ AVnum = 10; PVnumMax = 8; layerNum = 4;}
-	FancyName = "FrontDet"; RealName = "Front Detector";
-  } else if(n == 16 || n == 17 || n == 18 || n == 19){
-	if(n == 16){ AVnum = 11; PVnumMax = 6; layerNum = 1; }
-	if(n == 17){ AVnum = 11; PVnumMax = 6; layerNum = 2; }
-	if(n == 18){ AVnum = 12; PVnumMax = 8; layerNum = 3; }
-	if(n == 19){ AVnum = 12; PVnumMax = 8; layerNum = 4; }
-	FancyName = "FrontVeto"; RealName = "Front Veto";
-  } else if(n == 20 || n == 21){
-	if(n == 20){ AVnum = 13; PVnumMax = 16; layerNum = 1; }
-	if(n == 21){ AVnum = 13; PVnumMax = 16; layerNum = 2; }
-	FancyName = "BackTag"; RealName = "Back Tagger";
-  }
-  return;
-}
+
+
+
+
