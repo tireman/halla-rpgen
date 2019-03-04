@@ -276,7 +276,7 @@ void RPgenRates() {
 		
 		// Go for the plot
 		gr->SetMarkerStyle(21);
-		gr->Draw("APC");
+	gr->Draw("APC");
 	
 		C3[n]->cd(0);
 		char pname3[16];
