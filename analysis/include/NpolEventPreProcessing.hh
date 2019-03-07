@@ -26,7 +26,7 @@ public:
   void HodoscopeHitPosition(double hPos[],double lPos[], int detNums[]);
   void RotateNpolToG4(double hPos[], double RotAng);
   void RotateDetToNpol(double hPos[], int detNums[], double detAngle);
-  void RotateG4ToRoot(double curPos[], double newPos[], double detAngle);
+  void RotateG4ToRoot(double curPos[], double newPos[], double rotMat[][3]); //double detAngle);
   static double NpolAng;
   
 private:

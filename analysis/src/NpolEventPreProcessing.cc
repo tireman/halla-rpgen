@@ -149,9 +149,9 @@ void  NpolEventPreProcessing::RotateDetToNpol(double hPos[], int detNums[], doub
   return;
 }
 
-void NpolEventPreProcessing::RotateG4ToRoot(double curPos[], double newPos[], double detAngle){
+void NpolEventPreProcessing::RotateG4ToRoot(double curPos[], double newPos[], double rotMat[][3]){ //double detAngle){
   // interchange Z and Y axis and flip sign on X to go from G4 to ROOT coordinate systems.
-  double rotMat[3][3] = { {-1.,0.,0.}, {0.,0.,1.}, {0.,1.,0.} };
+  //double rotMat[3][3] = { {-1.,0.,0.}, {0.,0.,1.}, {0.,1.,0.} };
   
   newPos[0] = curPos[0]*rotMat[0][0] + curPos[1]*rotMat[0][1] + curPos[2]*rotMat[0][2];
   newPos[1] = curPos[0]*rotMat[1][0] + curPos[1]*rotMat[1][1] + curPos[2]*rotMat[1][2];
