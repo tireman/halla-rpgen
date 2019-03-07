@@ -137,7 +137,7 @@ int main(int argc, char *argv[]) {
   //HistoMan->CreateHistograms("Generic_2D_Histo","A Generic 2D Histogram",200,-350.0,350.0, 200,-50.0,50.0);
   
   //    3D-Histograms
-  //HistoMan->CreateHistograms("Hit_Position_3D","3D Hit Position Histogram",200, 0.0,550.0, 200,350.0,575.0, 200,-125.0,125.0); 
+  HistoMan->CreateHistograms("Hit_Position_3D","3D Hit Position Histogram",200, -100.0,550.0, 200,-100.0,575.0, 200,-125.0,125.0); 
   //HistoMan->CreateHistograms("Global_Position_3D","3D Global Hit Position Histogram",200,0.0,550.0, 200,350.,575., 200,-125,125); 
   //********************************* End Histogram Definitions ********************************
 
@@ -192,6 +192,12 @@ int main(int argc, char *argv[]) {
 		vertexMap[volumeName] = new NpolVertex();
 		vertexMap[volumeName] = copyVertex;
 	  }
+	  double curPos[3] = { vertex->lPosX, vertex->lPosY, vertex->lPosZ };
+	  double newPos[3] = { 0., 0., 0.};
+	  double rotMat[3][3] = { {-1.,0.,0.}, {0.,0.,1.}, {0.,1.,0.} };
+	  PProcess->RotateG4ToRoot(curPos,newPos,rotMat);
+	  HistoMan->FillHistograms("Hit_Position_3D",-vertex->gPosX,vertex->gPosZ,vertex->gPosY);
+	  //HistoMan->FillHistograms("Hit_Position_3D",newPos[0],newPos[1],newPos[2]);
 	}
 	// End the tracks loop
 
@@ -208,9 +214,6 @@ int main(int argc, char *argv[]) {
 
 
 	// Cycle through the detector event map and do stuff
-	//double curPos[3];
-	//double newPos[3];
-	//double rotMat[3][3] = { {-1.,0.,0.}, {0.,0.,1.}, {0.,1.,0.} };
 	std::map<std::string,NpolDetectorEvent *>::iterator det_it;
 	for(det_it = detEvents.begin(); det_it != detEvents.end(); det_it++) {
 	  std::string volumeName = det_it->first;
