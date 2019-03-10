@@ -170,6 +170,7 @@ int main(int argc, char *argv[]) {
 	//std::pair<double,std::vector<double> > scattNeutron4Vec;
 	//std::pair<double,std::vector<double> > scattParticle4Vec;
 
+	std::set<int> scintTracks;
 	std::map<std::string,NpolVertex *> vertexMap;  // Vertex Map Keyed to volume of origin
 	std::map<std::string,NpolDetectorEvent *> detEvents;   // Event map (NPOL Detector Class)
 	std::map<PolarimeterDetector, double> eDepArrayTotal;  // Total energy map for each array
@@ -180,6 +181,33 @@ int main(int argc, char *argv[]) {
     eDepArrayTotal[botEArray] = 0.0;
     eDepArrayTotal[botdEArray] = 0.0;
 
+
+	// fill detector map (as defined in NpolLib) with steps
+	std::vector<NpolStep *>::iterator s_it;
+	std::vector<NpolTagger *>::iterator t_it;
+	bool eventFlag = false;
+    for(s_it = steps->begin(); s_it != steps->end(); s_it++) {
+      NpolStep *aStep = *s_it;
+	  if(aStep == NULL) continue;
+	  Process->fillDetectorEventMap(detEvents,aStep);
+
+	  std::string volName = aStep->volume;
+	  //std::map<std::string,NpolDetectorEvent *>::iterator det_it2;
+	  if(detEvents.find(volName) != detEvents.end()){
+		//det_it2 = detEvents.find(volName);
+		//if(det_it2->second->thresholdExceeded){
+		  if(detEvents.find(volName)->second->thresholdExceeded){
+		  int AVnum = PProcess->GetAVNumber(volName);
+		  if(AVnum == 2 || AVnum == 6 || AVnum == 7){
+			//int trackID = aStep->trackId;
+			scintTracks.insert(aStep->trackId);
+		  }
+		}
+	  }
+	}
+	// End steps loop
+	  
+	  
 	// Cycle through the tracks vector and store information in a map
 	std::vector<NpolVertex *>::iterator v_it;
     for(v_it = verts->begin(); v_it != verts->end(); v_it++){
@@ -192,26 +220,17 @@ int main(int argc, char *argv[]) {
 		vertexMap[volumeName] = new NpolVertex();
 		vertexMap[volumeName] = copyVertex;
 	  }
-	  double curPos[3] = { vertex->lPosX, vertex->lPosY, vertex->lPosZ };
-	  double newPos[3] = { 0., 0., 0.};
-	  double rotMat[3][3] = { {-1.,0.,0.}, {0.,0.,1.}, {0.,1.,0.} };
-	  PProcess->RotateG4ToRoot(curPos,newPos,rotMat);
-	  HistoMan->FillHistograms("Hit_Position_3D",-vertex->gPosX,vertex->gPosZ,vertex->gPosY);
+
+	  if(scintTracks.find(vertex->trackId) != scintTracks.end()){
+		double curPos[3] = { vertex->lPosX, vertex->lPosY, vertex->lPosZ };
+		double newPos[3] = { 0., 0., 0.};
+		double rotMat[3][3] = { {-1.,0.,0.}, {0.,0.,1.}, {0.,1.,0.} };
+		PProcess->RotateG4ToRoot(curPos,newPos,rotMat);
+		HistoMan->FillHistograms("Hit_Position_3D",-vertex->gPosX,vertex->gPosZ,vertex->gPosY);
 	  //HistoMan->FillHistograms("Hit_Position_3D",newPos[0],newPos[1],newPos[2]);
+	  }
 	}
 	// End the tracks loop
-
-	// fill detector map (as defined in NpolLib) with steps
-	std::vector<NpolStep *>::iterator s_it;
-	std::vector<NpolTagger *>::iterator t_it;
-	bool eventFlag = false;
-    for(s_it = steps->begin(); s_it != steps->end(); s_it++) {
-      NpolStep *aStep = *s_it;
-	  if(aStep == NULL) continue;
-	  Process->fillDetectorEventMap(detEvents,aStep);
-	}
-	// End steps loop
-
 
 	// Cycle through the detector event map and do stuff
 	std::map<std::string,NpolDetectorEvent *>::iterator det_it;
@@ -264,8 +283,9 @@ int main(int argc, char *argv[]) {
 	}
 	 	
     // Clear out the maps for the next event
-	
+	scintTracks.clear();
 	eDepArrayTotal.clear();
+
 	std::map<std::string,NpolDetectorEvent *>::iterator e_it;
     for(e_it = detEvents.begin(); e_it != detEvents.end(); e_it++) delete e_it->second;
     detEvents.clear();
@@ -281,7 +301,8 @@ int main(int argc, char *argv[]) {
 	//scattParticle4Vec.second.clear();
 	
   }	// END EVENT LOOP
-  
+
+ 
   std::map<int,int>::iterator scint_it;
   for(scint_it = scintCounter.begin(); scint_it != scintCounter.end(); scint_it++){
 	if(scint_it->first >= 60099 && scint_it->first <= 61025) {
