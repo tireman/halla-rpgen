@@ -18,13 +18,14 @@ class G4Event;
 
 class NpolPrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
 {
-	public:
-		NpolPrimaryGeneratorAction();
-		virtual ~NpolPrimaryGeneratorAction();
-
-		virtual void GeneratePrimaries(G4Event*);
-
-	private:
+public:
+  NpolPrimaryGeneratorAction();
+  virtual ~NpolPrimaryGeneratorAction();
+  
+  virtual void GeneratePrimaries(G4Event*);
+  void GenerateNeutronEvent(){;
+  
+private:
   G4GeneralParticleSource* fParticleGun;
 };
 

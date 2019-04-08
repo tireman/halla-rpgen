@@ -41,3 +41,7 @@ void NpolPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   fParticleGun->GeneratePrimaryVertex(anEvent);
 }
 
+void NpolPrimaryGeneratorAction::GenerateNeutronEvent(){
+
+  
+}
