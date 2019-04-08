@@ -23,7 +23,7 @@ public:
   virtual ~NpolPrimaryGeneratorAction();
   
   virtual void GeneratePrimaries(G4Event*);
-  void GenerateNeutronEvent(){;
+  void GenerateNeutronEvent();
   
 private:
   G4GeneralParticleSource* fParticleGun;
