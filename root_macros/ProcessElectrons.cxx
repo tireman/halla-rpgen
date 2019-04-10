@@ -18,10 +18,10 @@
 #include <TVectorD.h>
 #include <TString.h>
 
-#include "../../npollib/include/NpolVertex.hh"
-#include "../../npollib/include/NpolTagger.hh"
-#include "../../npollib/include/NpolStatistics.hh"
-#include "../../npollib/include/NpolStep.hh"
+#include "../npollib/include/NpolVertex.hh"
+#include "../npollib/include/NpolTagger.hh"
+#include "../npollib/include/NpolStatistics.hh"
+#include "../npollib/include/NpolStep.hh"
 
 void RetrieveENVvariables();
 TString FormInputFile(TString InputDir);

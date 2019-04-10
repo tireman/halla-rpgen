@@ -1,8 +1,5 @@
-/* Npol Analysis Script is designed to analyze the neutron flux on 
-   the NPOL polarimeter being designed by the CGEN collaboration at 
-   Jefferson National Laboratory. (2016) Revisions: Spring 2017 by 
-   Will Tireman and Ashley Adzima (added some histograms) Revisions: 
-   January-March 2018 by Will Tireman (Fixed eff. calculation, cleaned up code)
+/* Npol Analysis Script is designed to analyze electron beam on LD2 
+target for the Hall A GEn recoil polarimetry experiment.
 */
 
 #include <iostream>

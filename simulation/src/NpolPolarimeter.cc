@@ -180,7 +180,8 @@ void NpolPolarimeter::ConstructPolarimeterFluxTagger(G4LogicalVolume *motherLV){
   G4Box *polarimeterTagger = new G4Box("polarimeterTagger",width/2,height/2,thick/2);
   G4LogicalVolume *polarimeterTaggerLV = new G4LogicalVolume(polarimeterTagger,NpolMaterials::GetInstance()->GetMaterial("HardVacuum"),"polarimeterTaggerLV",0,0,0);
   G4VisAttributes *TaggerVisAtt = new G4VisAttributes(G4Colour(0.2, 0.2, 0.2));
-  polarimeterTaggerLV->SetVisAttributes(TaggerVisAtt);
+  //polarimeterTaggerLV->SetVisAttributes(TaggerVisAtt);
+  polarimeterTaggerLV->SetVisAttributes(G4VisAttributes::GetInvisible());
   
   xPos = -(tagLocation)*sin(NpolAng);
   zPos = +(tagLocation)*cos(NpolAng);

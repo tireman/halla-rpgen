@@ -53,7 +53,7 @@ void NpolDetectorCountRates() {
   // Retrieve the object with the total number of electrons on target and calculate 
   // effective electron time on target per micro amp of beam
   TVectorD *v = (TVectorD*)inFile->Get("TVectorT<double>");
-  Double_t totalElectrons = ((*v))[0]; //1e11; //((*v))[0];
+  Double_t totalElectrons = 100*19.995e9; //((*v))[0]; //1e11; //((*v))[0];
   Double_t electronTime = totalElectrons/(6.242e12); //6.242e12 e-/s at 1 microAmp
   std::cout << "Electron beam time at 1 micro-amp is " << electronTime << " s " << std::endl;
   std::cout << "Total electrons on target: " << totalElectrons/1e9 << " Billion" << std::endl;

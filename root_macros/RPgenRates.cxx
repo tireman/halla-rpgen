@@ -104,7 +104,7 @@ void RPgenRates() {
 	for(int i = 0; i < Nx; i++){
 	  for(int j = 0; j < Ny; j++){
 		sprintf(histoName,"%s_Edep_%i",FancyName.c_str(),pvNum+1);
-		std::cout << "Detector name = " << histoName << std::endl;
+		//std::cout << "Detector name = " << histoName << std::endl;
 
 		double Thresholds[10];
 		switch(AVnum){
@@ -202,18 +202,18 @@ void RPgenRates() {
 		  double Threshold = Thresholds[k];
 		  DetCounts[i][j] = hFrame->Integral((Threshold/binWidth),nBins);    
 		  CountRates[k][i][j] = DetCounts[i][j]/electronTime/(1e3);
-		  std::cout << "Threshold = " << Thresholds[k] << " MeV" << std::endl;
-		  cout << RealName << ", detector # " << pvNum+1 << " counts/s for 1 microAmp of Beam " 
-			   << CountRates[k][i][j] << " kHz" << endl;
-		  cout << RealName << ", detector # " << pvNum+1 << " counts/s for 40 microAmp of Beam " 
-			   << 40*CountRates[k][i][j] << " kHz" << endl;    
-		  cout << " " << endl;
+		  //std::cout << "Threshold = " << Thresholds[k] << " MeV" << std::endl;
+		  //cout << RealName << ", detector # " << pvNum+1 << " counts/s for 1 microAmp of Beam " 
+		  //   << CountRates[k][i][j] << " kHz" << endl;
+		  //cout << RealName << ", detector # " << pvNum+1 << " counts/s for 40 microAmp of Beam " 
+		  //   << 40*CountRates[k][i][j] << " kHz" << endl;    
+		  //cout << " " << endl;
 		  // THis creates the x,y vectors for TGraph later on
 		  x[k] = Thresholds[k];
 		  y[k] = CountRates[k][i][j]; // scaled to 1 uA beam and 1 MHz
 		  if(y[k] > largestY) largestY = y[k];
 		  if(y[k] < smallestY) smallestY = y[k];
-		  
+		 
 		  x2[k] = Thresholds[k];
 		  y2[k] = DetCounts[i][j]; // scaled to 1 uA beam and 1 MHz
 		  if(y2[k] > largestY2) largestY2 = y2[k];
