@@ -37,3 +37,14 @@ if ( ! -e $NPOLWORKDIR/histos ) then
 	mkdir $NPOLWORKDIR/histos
 endif
 		
+if ( ! -e $NPOLWORKDIR/AllParticles/histos ) then
+	mkdir $NPOLWORKDIR/AllParticles/histos 
+endif
+
+if ( ! -e $NPOLWORKDIR/ChargedParticles/histos ) then
+	mkdir $NPOLWORKDIR/ChargedParticles/histos 
+endif
+
+if ( ! -e $NPOLWORKDIR/NeutralParticles/histos ) then
+	mkdir $NPOLWORKDIR/NeutralParticles/histos 
+endif
