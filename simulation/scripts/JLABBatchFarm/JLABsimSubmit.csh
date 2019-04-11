@@ -4,7 +4,7 @@ foreach i (`seq $1 1 $2`)
 
 cat > jsubfile_SIM_$3_$i << EOF1
 PROJECT: cgen
-TRACK : debug
+TRACK : simulation
 OS : centos7
 JOBNAME : RP-GEN_SIM_$3_$i
 MAIL: tireman@jlab.org

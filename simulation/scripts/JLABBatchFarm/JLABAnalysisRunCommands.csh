@@ -39,7 +39,7 @@ if ( -e $NPOLDIR/root/$NPOLBASENAME\_$1.root ) then
 	$BUILD_DIR/../analysis2/NpolProcessEvents
 
 	# Uncomment this line if you DO NOT want to keep the raw ROOT file after run #
-	rm $NPOLDIR/root/$NPOLBASENAME\_$1.root  
+	#rm $NPOLDIR/root/$NPOLBASENAME\_$1.root  
 	
 endif 
 
