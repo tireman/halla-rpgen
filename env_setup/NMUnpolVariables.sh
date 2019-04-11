@@ -3,7 +3,7 @@
 export Lead=0
 export Energy=4.4
 export Bfield=2
-export pType=QENeutron
+export pType=EventGenerator
 export NPOLBASENAME=source$pType\_Lead$Lead\cm_$Energy\GeV_$Bfield\Bdl
 export NPOLEVENTSPERFILE=10000
 
