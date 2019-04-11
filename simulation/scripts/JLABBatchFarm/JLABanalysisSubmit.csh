@@ -9,9 +9,9 @@ OS : centos7
 JOBNAME : TargetTagger_AY$3_$i
 MAIL: tireman@jlab.org
 TIME: 60
-MEMORY: 1350 MB
+MEMORY: 1000 MB
 COMMAND : source JLABAnalysisRunCommands.csh $i $3
-OTHER_FILES : /u/home/tireman/simulation/e11_12_009/background/nmu-npol/build/simulation/scripts/JLABBatchFarm/JLABAnalysisRunCommands.csh
+OTHER_FILES : /u/home/tireman/simulation/e12-17-004/halla-rpgen/build/simulation/scripts/JLABBatchFarm/JLABAnalysisRunCommands.csh
 EOF1
 end
 

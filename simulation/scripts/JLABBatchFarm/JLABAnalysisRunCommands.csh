@@ -1,8 +1,8 @@
 #!/bin/tsch
 
-setenv BUILD_DIR /home/tireman/simulation/e11_12_009/background/nmu-npol/build/simulation
+setenv BUILD_DIR /home/tireman/simulation/e12-17-004/halla-rpgen/build/simulation
 setenv pType $2
-source $BUILD_DIR/../../analysis/envscripts/JLABsetupAnalysis.csh
+source $BUILD_DIR/../../env_setup/JLABsetupAnalysis.csh
 
 setenv JOBNUMBER $1
 
@@ -12,7 +12,7 @@ cp -R $BUILD_DIR/../../npollib/include/*.hh .
 cp $BUILD_DIR/../npollib/libNpolClasses.so .
 cp $BUILD_DIR/../../simulation/include/*.hh .
 
-source /site/12gev_phys/production.csh 2.0
+source /site/12gev_phys/softenv.csh 2.2
 
 echo "Starting up Job Number $1."	
 
@@ -39,7 +39,7 @@ if ( -e $NPOLDIR/root/$NPOLBASENAME\_$1.root ) then
 	$BUILD_DIR/../analysis2/NpolProcessEvents
 
 	# Uncomment this line if you DO NOT want to keep the raw ROOT file after run #
-	#rm $NPOLDIR/root/$NPOLBASENAME\_$1.root  
+	rm $NPOLDIR/root/$NPOLBASENAME\_$1.root  
 	
 endif 
 

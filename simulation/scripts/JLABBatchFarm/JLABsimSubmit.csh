@@ -4,14 +4,14 @@ foreach i (`seq $1 1 $2`)
 
 cat > jsubfile_SIM_$3_$i << EOF1
 PROJECT: cgen
-TRACK : simulation
+TRACK : debug
 OS : centos7
-JOBNAME : TargetTagger_SIM$3_$i
+JOBNAME : RP-GEN_SIM_$3_$i
 MAIL: tireman@jlab.org
-TIME: 360
-MEMORY: 1700 MB
+TIME: 180
+MEMORY: 1800 MB
 COMMAND : source JLABsimRunCommands.csh $i $3
-OTHER_FILES : /u/home/tireman/simulation/e11_12_009/background/nmu-npol/build/simulation/scripts/JLABBatchFarm/JLABsimRunCommands.csh
+OTHER_FILES : /u/home/tireman/simulation/e12-17-004/halla-rpgen/build/simulation/scripts/JLABBatchFarm/JLABsimRunCommands.csh
 EOF1
 end
 
@@ -21,3 +21,4 @@ foreach j (`seq $1 1 $2`)
   rm jsubfile_SIM_$3_$j
 
 end
+
