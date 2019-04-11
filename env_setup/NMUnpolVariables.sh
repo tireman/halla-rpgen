@@ -3,9 +3,9 @@
 export Lead=0
 export Energy=4.4
 export Bfield=2
-export pType=ElectronBeam
+export pType=QENeutron
 export NPOLBASENAME=source$pType\_Lead$Lead\cm_$Energy\GeV_$Bfield\Bdl
-export NPOLEVENTSPERFILE=100000
+export NPOLEVENTSPERFILE=10000
 
 export BUILD_DIR=/home/tireman/simulation/jlab/nmu-rpgen/build/simulation
 export NPOLLIB_DIR=/home/tireman/simulation/jlab/nmu-rpgen/build/npollib

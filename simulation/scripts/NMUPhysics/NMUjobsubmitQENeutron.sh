@@ -16,8 +16,9 @@ fi
 for ((i=$START; i<=$FINISH; i++))
 do
     export JOBNUMBER=$i
-	source /home/tireman/simulation/jlab/nmu-npol/analysis/envscripts/NMUnpolVariables.sh
-
+	export PType=QENeutron
+	source /home/tireman/simulation/jlab/nmu-rpgen/env_setup/NMUnpolVariables.sh
+	
     if [ -f "$NPOLDIR/${NPOLBASENAME}_$i.out" ]
     then
 		rm $NPOLDIR/${NPOLBASENAME}_$i.out
@@ -31,8 +32,6 @@ do
 
 	rm $NPOLDIR/root/source$PType\_Lead$Lead\cm_$Energy\GeV_$Bfield\Bdl_$i\_*.root
 
-	source /home/tireman/simulation/jlab/nmu-npol/analysis/envscripts/NMUsetupAnalysis.sh
-	
 	$BUILD_DIR/../analysis/NpolAnalysis 1>$NPOLDIR/dumpFiles/${NPOLBASENAME}Analysis1_$i.out 2>$NPOLDIR/dumpFiles/${NPOLBASENAME}Analysis1_$i.err
 	
 done
