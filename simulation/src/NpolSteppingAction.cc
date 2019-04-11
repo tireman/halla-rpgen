@@ -45,7 +45,15 @@ void NpolSteppingAction::UserSteppingAction(const G4Step *aStep) {
   G4String volName = preStepVolume->GetName();
    
   // Kill/stop tracks that will just waste precious CPU time
-  if(volName == "Cap" || postStepVolume == NULL || volName == "HallShellRoof" ||volName == "HallShellFloor" || volName == "HallShellWall"){
+  if(volName == "Cap" || postStepVolume == NULL 
+	 || volName == "HallShellRoof" 
+	 || volName == "HallShellFloor" 
+	 || volName == "HallShellWall"
+	 //|| volName == "LeadInsert"
+	 //|| volName == "Dipole2"
+	 //|| volName == "Dipole2SaddleCoil"
+	 //|| volName == "Dipole2RaceCoil"
+	 ){
  	analysisMan->TrackKilled(aTrack->GetTrackID());
 	aTrack->SetTrackStatus(fStopAndKill);
   }
