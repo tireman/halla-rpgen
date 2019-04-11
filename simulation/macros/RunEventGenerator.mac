@@ -1,7 +1,7 @@
-### Test Test Test Test
+### RunEventGenerator.mac
 
-# $Id: npol.mac,v1.1 For running with or without visualization
-# on the nmu-Npol simulation 6/24/2016 $
+# $Id:For running with or without visualization
+# on the RP-GEn simulation 4/11/2019 $
 # 
 # This macro feeds commands to the primary event generator and allows 
 # for changing of beam parameters within the macro. 
@@ -29,22 +29,24 @@
 #
 # Commands below are for the NPOL messenger
 #
-/npol/polarScattering true  # turn off(false) or on(true) Glasgow polarized scattering
-
+/npol/polarScattering true  # turn off(false) or on(true) 
+					  		# Glasgow polarized scattering
+							
 /npol/gun/maxDCS 0.045
 /npol/gun/filter polarized
 /npol/gun/generator dcs
 /npol/gun/channel 3
 /npol/gun/energy 4.4 GeV
-/npol/gun/beamPolarization 0.8
-/npol/gun/openAngle 5.0 
+/npol/gun/beamPolarization 0.80
+/npol/gun/openAngle 25.0 
 /npol/gun/helicityRatio 1.0
-/npol/gun/GEn 0.0			# a value of '0' triggers built in computation of GEn and GMn
-/npol/gun/GMn 0.0		
+/npol/gun/GEn 0.0			# a value of '0' triggers built
+/npol/gun/GMn 0.0			# in computation of GEn and GMn  
+		
 
 #
 # Run commands
 #
-/vis/scene/endOfEventAction accumulate 2000
+/vis/scene/endOfEventAction accumulate 200
 /run/printProgress 100
-/run/beamOn 5000
+/run/beamOn 2000
