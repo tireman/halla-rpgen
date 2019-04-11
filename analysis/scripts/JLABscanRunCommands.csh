@@ -1,6 +1,6 @@
 #!/bin/tsch
 
-setenv BUILD_DIR /home/tireman/simulation/e11_12_009/background/nmu-npol/build/simulation
+setenv BUILD_DIR /home/tireman/simulation/e12-17-004/halla-rpgen/build/simulation
 setenv pType $2
 
 source $BUILD_DIR/../../analysis/envscripts/JLABsetupAnalysis.csh
@@ -12,7 +12,7 @@ cp -R $BUILD_DIR/../../npollib/include/*.hh .
 cp $BUILD_DIR/../npollib/libNpolClasses.so .
 cp $BUILD_DIR/../../simulation/include/*.hh .
 
-source /site/12gev_phys/production.csh 2.0
+source /site/12gev_phys/softenv.csh 2.2
 
 @ NUM1 = ( $1 - 1 ) * 25 + 1
 @ NUM2 = $1 * 25
