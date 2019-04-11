@@ -1,14 +1,14 @@
 #!/bin/sh
 
-export Lead=15
+export Lead=0
 export Energy=4.4
-export Bfield=4
-export pType=QENeutron
+export Bfield=2
+export pType=ElectronBeam
 export NPOLBASENAME=source$pType\_Lead$Lead\cm_$Energy\GeV_$Bfield\Bdl
-export NPOLEVENTSPERFILE=5000
+export NPOLEVENTSPERFILE=100000
 
-export BUILD_DIR=/home/tireman/simulation/jlab/nmu-npol/build/simulation
-export NPOLLIB_DIR=/home/tireman/simulation/jlab/nmu-npol/build/npollib
+export BUILD_DIR=/home/tireman/simulation/jlab/nmu-rpgen/build/simulation
+export NPOLLIB_DIR=/home/tireman/simulation/jlab/nmu-rpgen/build/npollib
 
 #export NPOLDIR=/home/tireman/data1/TargetTaggerSource/$pType\RawSim/$Energy\GeV/$Bfield\Bdl/Lead$Lead\cm/Location_2
 #export NPOLWORKDIR=/home/tireman/data1/TargetTaggerSource/$pType\RawSim/$Energy\GeV/$Bfield\Bdl/Lead$Lead\cm/Location_2

@@ -8,8 +8,8 @@ setenv Bfield 2
 setenv NPOLLIB_DIR $BUILD_DIR/../npollib
 setenv NPOLBASENAME source$pType\_Lead$Lead\cm_$Energy\GeV_$Bfield\Bdl 
 #electronBeam_Lead$Lead\cm_$Energy\GeV_$Bfield\Bdl
-setenv NPOLDIR /volatile/hallc/cgen/tireman/RP-GEN/bckgnd/run1
-setenv NPOLWORKDIR /volatile/hallc/cgen/tireman/RP-GEN/bckgnd/run1
+setenv NPOLDIR /volatile/hallc/cgen/tireman/RP-GEN/bckgnd/run3
+setenv NPOLWORKDIR /volatile/hallc/cgen/tireman/RP-GEN/bckgnd/run3
 
 setenv RawDataDir $NPOLDIR/root
 setenv OutputDir $NPOLWORKDIR/Output
