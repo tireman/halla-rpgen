@@ -20,6 +20,13 @@
 /tracking/verbose 0
 /tracking/storeTrajectory 1
 
+#
+# Commands below are for the NPOL messenger
+#
+/npol/gun/generator gps      # use General Particle Source 
+/npol/polarScattering false  # turn off(false) or on(true) 
+					  		 # Glasgow polarized scattering
+
 ### GPS commands ####
 # Particle type
 /gps/particle e-
@@ -39,5 +46,7 @@
 #
 # Commands below are independent of gps
 #
-/run/printProgress 10000
-/run/beamOn 5000000
+/vis/scene/endOfEventAction accumulate 200
+/run/printProgress 1000
+/run/beamOn 100000
+
