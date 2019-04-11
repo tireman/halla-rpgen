@@ -19,6 +19,7 @@
 //         right track.
 // Modified: 3-April-2019  Added NPOL messenger class and debugged -- W.T.
 
+#include "Randomize.hh"
 #include "G4Event.hh"
 #include "G4GeneralParticleSource.hh"
 #include "G4ParticleTable.hh"
@@ -87,6 +88,12 @@ void NpolPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 	G4double nTheta = primeEvent.neutronVector->Theta();
 	G4double nPhi = primeEvent.neutronVector->Phi();
 
+	G4double x0Pos = 0, y0Pos = 0, z0Pos = 0, zTarLen = 10*cm, raster = 2*mm;
+	x0Pos = raster*G4UniformRand() - raster/2;
+	y0Pos = raster*G4UniformRand() - raster/2;
+	z0Pos = zTarLen*G4UniformRand() - zTarLen/2;
+	
+
 	// Need to optimize the Polarization setting to make sense in real experiement setting.
 	// For now, we just rotate the Transverse and longitudinal components by 90 degrees.
 	G4double polX = primeEvent.polLong;//primeEvent.polTran; // normally this
@@ -105,7 +112,7 @@ void NpolPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 	
 	fParticleGun->SetParticleMomentum(nMom);
 	fParticleGun->SetParticleMomentumDirection(momPrime);
-	fParticleGun->SetParticlePosition(G4ThreeVector(0., 0., 0.));
+	fParticleGun->SetParticlePosition(G4ThreeVector(x0Pos,y0Pos,z0Pos));
 	fParticleGun->SetParticlePolarization(G4ThreeVector(polX,polY,polZ));
 	fParticleGun->GeneratePrimaryVertex(anEvent); 
   } else if (genMethod == "gps"){
