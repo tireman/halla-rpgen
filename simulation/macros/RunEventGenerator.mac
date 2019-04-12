@@ -18,7 +18,7 @@
 /material/verbose 0
 /cuts/verbose 0
 /process/verbose 0
-
+ 
 /tracking/verbose 0
 /tracking/storeTrajectory 1
 
@@ -32,7 +32,7 @@
 /npol/polarScattering true  # turn off(false) or on(true) 
 					  		# Glasgow polarized scattering
 							
-/npol/gun/maxDCS 0.045
+/npol/gun/maxDCS 0.038      # maximum diff. cross section for generator
 /npol/gun/filter polarized
 /npol/gun/generator dcs
 /npol/gun/channel 3
