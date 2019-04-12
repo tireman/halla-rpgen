@@ -33,6 +33,6 @@ do
 
 	$BUILD_DIR/../analysis/NpolAnalysis 1>$NPOLDIR/dumpFiles/${NPOLBASENAME}Analysis1_$i.out 2>$NPOLDIR/dumpFiles/${NPOLBASENAME}Analysis1_$i.err
 
-	rm $NPOLDIR/root/source$pType\_Lead$Lead\cm_$Energy\GeV_$Bfield\Bdl_$i.root
+	#rm $NPOLDIR/root/source$pType\_Lead$Lead\cm_$Energy\GeV_$Bfield\Bdl_$i.root
 	
 done
