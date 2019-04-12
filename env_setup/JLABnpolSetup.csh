@@ -1,5 +1,6 @@
 #!/bin/tsch
 
+setenv BUILD_DIR /home/tireman/simulation/e12-17-004/halla-rpgen/build/simulation
 setenv Lead 0
 setenv Energy 4.4
 setenv Bfield 2
@@ -18,33 +19,33 @@ setenv WorkInputDir $NPOLWORKDIR
 setenv WorkOutputDir $NPOLWORKDIR
 
 if ( ! -e $NPOLDIR/root ) then
-	mkdir $NPOLDIR/root
+	mkdir -p $NPOLDIR/root
 endif
 
 if ( ! -e $NPOLDIR/dumpFiles ) then
-	mkdir $NPOLDIR/dumpFiles
+	mkdir -p $NPOLDIR/dumpFiles
 endif
 
 if ( ! -e $NPOLWORKDIR/Plots ) then
-	mkdir $NPOLWORKDIR/Plots
+	mkdir -p $NPOLWORKDIR/Plots
 endif
 
 if ( ! -e $NPOLWORKDIR/Output ) then
-	mkdir $NPOLWORKDIR/Output
+	mkdir -p $NPOLWORKDIR/Output
 	endif
 	
 if ( ! -e $NPOLWORKDIR/histos ) then
-	mkdir $NPOLWORKDIR/histos
+	mkdir -p $NPOLWORKDIR/histos
 endif
 		
 if ( ! -e $NPOLWORKDIR/AllParticles/histos ) then
-	mkdir $NPOLWORKDIR/AllParticles/histos 
+	mkdir -p $NPOLWORKDIR/AllParticles/histos 
 endif
 
 if ( ! -e $NPOLWORKDIR/ChargedParticles/histos ) then
-	mkdir $NPOLWORKDIR/ChargedParticles/histos 
+	mkdir -p $NPOLWORKDIR/ChargedParticles/histos 
 endif
 
 if ( ! -e $NPOLWORKDIR/NeutralParticles/histos ) then
-	mkdir $NPOLWORKDIR/NeutralParticles/histos 
+	mkdir -p $NPOLWORKDIR/NeutralParticles/histos 
 endif
