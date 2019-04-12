@@ -10,11 +10,11 @@ export NPOLEVENTSPERFILE=10000
 export BUILD_DIR=/home/tireman/simulation/jlab/nmu-rpgen/build/simulation
 export NPOLLIB_DIR=/home/tireman/simulation/jlab/nmu-rpgen/build/npollib
 
-#export NPOLDIR=/home/tireman/data1/TargetTaggerSource/$pType\RawSim/$Energy\GeV/$Bfield\Bdl/Lead$Lead\cm/Location_2
-#export NPOLWORKDIR=/home/tireman/data1/TargetTaggerSource/$pType\RawSim/$Energy\GeV/$Bfield\Bdl/Lead$Lead\cm/Location_2
+#export NPOLDIR=/home/tireman/data1/DCStest/$pType\RawSim/$Energy\GeV/$Bfield\Bdl/Lead$Lead\cm/Location_2
+#export NPOLWORKDIR=/home/tireman/data1/DCStest/$pType\RawSim/$Energy\GeV/$Bfield\Bdl/Lead$Lead\cm/Location_2
 
-export NPOLDIR=/home/tireman/data1/DCStest/$pType\RawSim/$Energy\GeV/$Bfield\Bdl/Lead$Lead\cm/Location_2
-export NPOLWORKDIR=/home/tireman/data1/DCStest/$pType\RawSim/$Energy\GeV/$Bfield\Bdl/Lead$Lead\cm/Location_2
+export NPOLDIR=/home/jmcmullen/data1/RP-GEN/$pType\RawSim/$Energy\GeV/$Bfield\Bdl/Lead$Lead\cm/Location_2/Run1
+export NPOLWORKDIR=/home/jmcmullen/data1/RP-GEN/$pType\RawSim/$Energy\GeV/$Bfield\Bdl/Lead$Lead\cm/Location_2/Run1
 
 export RawDataDir=$NPOLDIR/root
 export OutputDir=$NPOLDIR/Output
