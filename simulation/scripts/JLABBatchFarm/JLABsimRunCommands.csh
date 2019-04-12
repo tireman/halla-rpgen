@@ -2,7 +2,7 @@
 
 setenv BUILD_DIR /home/tireman/simulation/e12-17-004/halla-rpgen/build/simulation
 setenv pType $2
-source $BUILD_DIR/scripts/JLABBatchFarm/JLABsetupRun.csh
+source $BUILD_DIR/../../env_setup/JLABnpolSetup.csh
 
 setenv JOBNUMBER $1
 
