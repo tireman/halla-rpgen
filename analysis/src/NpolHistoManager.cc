@@ -52,7 +52,6 @@ void NpolHistoManager::CreateHistograms(std::string hID, std::string hTitle,int 
 	std::cout << "Z Bins value must be a non-zero integer" << std::endl;
 	return;
   }
-  
   std::string histogramRef = "h_" + hID;
   histoMap3D[histogramRef] = new TH3F(hID.c_str(),hTitle.c_str(),xBins,xMin,xMax,yBins,yMin,yMax,zBins,zMin,zMax);
 }
@@ -85,13 +84,13 @@ void NpolHistoManager::WriteHistograms(){
 	if(histoIt3->second == NULL) continue;
 	histoIt3->second->Write();
   }
-  
- std::map<std::string,TH3F *>::iterator histoIt4;
+
+  std::map<std::string,TH3F *>::iterator histoIt4;
   for(histoIt4 = histoMap3D.begin(); histoIt4 != histoMap3D.end(); histoIt4++) {
 	if(histoIt4->second == NULL) continue;
 	histoIt4->second->Write();
   }
-  
+
 }
 
 void NpolHistoManager::ClearHistograms(){
@@ -105,11 +104,11 @@ void NpolHistoManager::DeleteHistograms(){
   for(histoIt = histoMap.begin(); histoIt != histoMap.end(); histoIt++) {
 	delete histoIt->second;
   }
-std::map<std::string,TH2F *>::iterator histoIt2;
+  std::map<std::string,TH2F *>::iterator histoIt2;
   for(histoIt2 = histoMap2D.begin(); histoIt2 != histoMap2D.end(); histoIt2++) {
 	delete histoIt2->second;
   }
-std::map<std::string,TH3F *>::iterator histoIt3;
+  std::map<std::string,TH3F *>::iterator histoIt3;
   for(histoIt3 = histoMap3D.begin(); histoIt3 != histoMap3D.end(); histoIt3++) {
 	delete histoIt3->second;
   }
