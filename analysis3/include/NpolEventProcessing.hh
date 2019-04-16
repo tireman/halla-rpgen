@@ -24,7 +24,7 @@ enum PolarimeterDetector {
   topdEArray,
   botEArray,
   botdEArray,
-  hCal,  
+  backPlane,
   unknown
   };
 

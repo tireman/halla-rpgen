@@ -3,7 +3,7 @@
 #include "NpolEventPreProcessing.hh"
 #include "NpolPhysicsVariables.hh"
 
-#define EDEP_THRESHOLD 0.50  /*MeV*/
+#define EDEP_THRESHOLD 1.0  /*MeV*/
 /*MeV This threshold is a per detector low value in SOI selection */
 double NpolEventProcessing::LOW_THRESHOLD = 0.040;
 /* number of analyzer layers; not general; only good for 4 and 6 layers */
@@ -57,14 +57,12 @@ void NpolEventProcessing::fillDetectorEventMap(std::map<std::string,NpolDetector
 	double lPos[3] = { aStep->lPosX, aStep->lPosY, aStep->lPosZ };
 	int detNums[3] = { AVNum, imprintNum, PVNum };
 	
-	if((AVNum == 2)){
+	if(AVNum == 3){
 	  PProcess->AnalyzerHitPosition(hitPos, lPos, detNums);
-	} else if((AVNum == 4)){
-	  PProcess->TaggerHitPosition(hitPos, lPos, detNums);
-	} else if((AVNum == 5)){
-	  PProcess->DeltaEarrayHitPosition(hitPos, lPos, detNums);
-	} else if((AVNum == 6) || (AVNum == 7)){
-	  PProcess->EarrayHitPosition(hitPos, lPos, detNums);
+	} else if (AVNum == 4){
+	  PProcess->BackTaggerHitPosition(hitPos, lPos, detNums);
+	} else if(AVNum == 5){
+	  PProcess->HodoscopeHitPosition(hitPos, lPos, detNums);
 	}
 	
 	(eventMap[aStep->volume])->hPosX = hitPos[0]; 
@@ -94,14 +92,11 @@ void NpolEventProcessing::fillVertexMap(std::map<int,NpolVertex *> &theVertexMap
 	std::string volName = aVertex->volume;
 	double time = aVertex->time;
 		
-	// Well, I can't figure out how to copy data at one pointer
-	// to data at another pointer (in a map) and then later delete
-	// the pointers in the map without it killing the original pointers
-	// So this resulted :(((
 	if((PID == DesiredPID && volName == eventVolume && time == eventTime /*&& process == eventProcess*/) || PID == 0){
 	  if(theVertexMap.find(TID) == theVertexMap.end()){
 		theVertexMap[TID] = new NpolVertex();
 		theVertexMap[TID] = copyVertex;
+
 	  }
 	}	
   }
@@ -151,11 +146,8 @@ int NpolEventProcessing::sectionNumber(const std::string &volName) {
   
   int avNum, imprNum, pvNum;
   if((avNum = PProcess->GetAVNumber(volName)) == -1) return -1;
-
-  // there is only one "secton" in RP-GEN
-  return 0;
   
-  /*if(LAYER_NUM == 4){
+  if(LAYER_NUM == 4){
     switch(avNum) {
     case 1: // Top E array 1 
     case 5: // Bottom E array 1
@@ -246,7 +238,7 @@ int NpolEventProcessing::sectionNumber(const std::string &volName) {
       return -1;
     }
   } else { return -1;
-  }*/
+  }
 }
 
 // This method returns the NPOL detector "type" which is defined as the following:
@@ -258,22 +250,8 @@ int NpolEventProcessing::sectionNumber(const std::string &volName) {
 // botdEArray = any detector in the bottom dE-array detectors.  There are 2 imprints per section with 2 sections (4 total)
 PolarimeterDetector NpolEventProcessing::detectorType(const std::string &volName) {
   NpolEventPreProcessing *PProcess = NpolEventPreProcessing::GetInstance();
-
-  int avNum = PProcess->GetAVNumber(volName);
-  int imprNum = PProcess->GetImprNumber(volName);
-  switch(avNum) {
-  case 2: return analyzer;
-  case 6: return topEArray;
-  case 7: return botEArray;
-  case 4: {
-	if((imprNum == 1) || (imprNum == 2)) return topdEArray;
-	if((imprNum == 3) || (imprNum == 4)) return botdEArray;
-  }
-  case 1: return hCal;
-  default: return unknown;
-  }
   
-  /*int avNum = PProcess->GetAVNumber(volName);
+  int avNum = PProcess->GetAVNumber(volName);
   if(LAYER_NUM == 4){
     switch(avNum) {
     case 1: case 2: return topEArray;
@@ -298,7 +276,7 @@ PolarimeterDetector NpolEventProcessing::detectorType(const std::string &volName
     }
   }else{
 	return unknown;
-	}*/
+  }
 }
 
 // Return the frontmost polarimeter section that passes requirements 1 and 2.
@@ -420,10 +398,8 @@ void NpolEventProcessing::getEDepArrayTotal(std::map<std::string,NpolDetectorEve
 		(*eDepArrayTotal)[detector] += e_it->second->totEnergyDep;
 	  }
 	}
-
-
 	
-	/*if(section == (SOI + 1)){
+	if(section == (SOI + 1)){
 	  int AVNum = PProcess->GetAVNumber(e_it->first);
 	  int PVNum = PProcess->GetPlacementNumber(e_it->first);
 	  if(section == 1){
@@ -469,7 +445,7 @@ void NpolEventProcessing::getEDepArrayTotal(std::map<std::string,NpolDetectorEve
 		  }
 		}
 	  }
-	  }*/
+	}
   }
   return;
 }
