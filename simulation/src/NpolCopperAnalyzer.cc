@@ -28,6 +28,8 @@
 #include "NpolPolarimeter.hh"
 
 G4double NpolCopperAnalyzer::CopperThickness = 4.0*cm;  // thickness of the Cu analyzer
+G4double NpolCopperAnalyzer::CopperHeight = 202*cm;
+G4double NpolCopperAnalyzer::CopperWidth = 62.0*cm;
 G4double NpolCopperAnalyzer::PosCopper = NpolPolarimeter::CuAnalyzerPos;
 
 NpolCopperAnalyzer::NpolCopperAnalyzer() {

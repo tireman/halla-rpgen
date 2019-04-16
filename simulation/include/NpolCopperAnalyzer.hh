@@ -27,7 +27,7 @@ public:
   NpolCopperAnalyzer();
   ~NpolCopperAnalyzer();
 
-  static G4double PosCopper, CopperThickness;
+  static G4double PosCopper, CopperThickness, CopperHeight, CopperWidth;
 
   void ConstructCopperAnalyzer();
   
