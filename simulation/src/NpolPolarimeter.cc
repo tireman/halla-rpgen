@@ -44,12 +44,16 @@
 #include "NpolAnalysisManager.hh"
 #include "NpolDetectorFactory.hh"
 #include "NpolDetectorConstruction.hh"
+#include "NpolCopperAnalyzer.hh"
 
 G4double NpolPolarimeter::NpolAng = 24.7*deg;
 
 G4double NpolPolarimeter::AnalyzerX = 4.0*cm;
 G4double NpolPolarimeter::AnalyzerY = 4.0*cm;
 G4double NpolPolarimeter::AnalyzerZ = 25.*cm;
+G4double NpolPolarimeter::vertAnalyzerX = 10.0*cm;
+G4double NpolPolarimeter::vertAnalyzerY = 100.0*cm;
+G4double NpolPolarimeter::vertAnalyzerZ = 10.0*cm;
 
 G4double NpolPolarimeter::LeftHodoscopeX = 0.3*cm;
 G4double NpolPolarimeter::RightHodoscopeX = 3.0*cm;
@@ -80,6 +84,48 @@ NpolPolarimeter::~NpolPolarimeter() {}
 G4String NpolPolarimeter::GetName() {
   return G4String("Polarimeter");
 }
+
+// There are "2" CH analyzer arrays.  This one is two 10cm by 10cm by 100cm long
+// scintillator detectors in a vertical orientation of there long axis.
+// They are placed on the outer edge of the acceptance with respect to the copper
+// analyzer for the charge exchange process. 
+void NpolPolarimeter::ConstructVertAnalyzer(G4LogicalVolume *motherLV) {
+
+  G4double YPos = 0.0*m;  // y-direction (up-down of beam)
+  G4double XPos = 0.0*m; // x-direction (left right of beam)
+  G4double ZPos = CHAnalyzerPos; // z-direction (in direction of beam)
+  
+  G4VSolid *VertAnalyzer = new G4Box("VertAnalyzer",vertAnalyzerX/2,vertAnalyzerY/2,vertAnalyzerZ/2);
+  G4LogicalVolume *VertAnalyzerLV = new G4LogicalVolume(VertAnalyzer,
+	  NpolMaterials::GetInstance()->GetMaterial("Scint"),"VertAnalyzerLV",0,0,0);
+  
+  G4AssemblyVolume *VertAnalyzerArray = new G4AssemblyVolume();
+  G4RotationMatrix Ra, Rm; 
+  G4ThreeVector Ta, Tm;
+  G4Transform3D Tr;
+  
+  Ra.rotateX(0.0*deg);
+  Ra.rotateY(0.0*deg);
+  Ra.rotateZ(0.0*deg);
+  // Place the first of two LV in the assembly
+  Ta.setX(NpolCopperAnalyzer::CopperWidth/2-vertAnalyzerX/2); Ta.setY(0.0*cm); Ta.setZ(0.0*cm);
+  Tr = G4Transform3D(Ra,Ta);
+  VertAnalyzerArray->AddPlacedVolume(VertAnalyzerLV,Tr);
+  // Place the second of two LV in the assembly
+  Ta.setX(-(62.0*cm/2-vertAnalyzerX/2)); 
+  Tr = G4Transform3D(Ra,Ta);
+  VertAnalyzerArray->AddPlacedVolume(VertAnalyzerLV,Tr);
+  // Place one imprint of the assembly in the world
+  Tm.setX(XPos - ZPos*sin(NpolAng)); Tm.setY(YPos); Tm.setZ(ZPos*cos(NpolAng));
+  Rm.rotateX(0.0*deg);
+  Rm.rotateY(-NpolAng);
+  Rm.rotateZ(0.0*deg);
+  ImprintPlate(VertAnalyzerArray, motherLV, Tm, Rm);
+  
+  G4VisAttributes *TopVisAtt= new G4VisAttributes(G4Colour(0.5,0.5,0.0));
+  VertAnalyzerLV->SetVisAttributes(TopVisAtt);
+}
+
 
 //---------------------------
 // Analyzer array based on University of Glasgow prototype highly segmented array.
@@ -285,7 +331,8 @@ void NpolPolarimeter::ConstructFakeGEM(G4LogicalVolume *motherLV){
 void NpolPolarimeter::Place(G4LogicalVolume *motherLV) {
   
   copperAnalyzer->Place(motherLV);
-  ConstructAnalyzerArray(motherLV);
+  ConstructVertAnalyzer(motherLV);
+  //ConstructAnalyzerArray(motherLV);
   ConstructFakeGEM(motherLV); // Just scintillator sheets in place of GEMs for tracking
   ConstructHodoscopeArray(motherLV);
   ConstructPolarimeterFluxTagger(motherLV);

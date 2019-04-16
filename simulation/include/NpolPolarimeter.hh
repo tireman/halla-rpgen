@@ -32,12 +32,13 @@ public:
   ~NpolPolarimeter();
 
   static G4double NpolAng;
-  static G4double AnalyzerX, AnalyzerY, AnalyzerZ;
+  static G4double AnalyzerX, AnalyzerY, AnalyzerZ, vertAnalyzerX, vertAnalyzerY, vertAnalyzerZ;
   static G4double LeftHodoscopeX,RightHodoscopeX, HodoscopeY, HodoscopeZ;
   static G4double HodoYPos, LeftHodoXPos, RightHodoXPos, HodoZPos;
   static G4double CuAnalyzerPos, CHAnalyzerPos;
   static const G4Colour CopperColor, SteelColor, ScintColor;
-  
+
+  void ConstructVertAnalyzer(G4LogicalVolume *motherLV);
   void ConstructAnalyzerArray(G4LogicalVolume *motherLV);
   void ConstructHodoscopeArray(G4LogicalVolume *motherLV);
   void ConstructFakeGEM(G4LogicalVolume *motherLV);
