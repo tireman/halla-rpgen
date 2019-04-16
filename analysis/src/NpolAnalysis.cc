@@ -247,7 +247,7 @@ int main(int argc, char *argv[]) {
 	  int PID = aStep->parentId;
 	  int TID = aStep->trackId;
 
-	  if((PID == 0 && TID == 1) && (AVNum == 9 || AVNum == 10)){			
+	  if((PID == 0 && TID == 1) && (AVNum == 2)){			
 		if(physProcess == "hadElastic"){
 		  elasticFlag = true;
 		  Process->fillFourVector(aStepOrig,projNeutron4Vec);
