@@ -3,7 +3,7 @@
 #include "NpolEventPreProcessing.hh"
 #include "NpolPhysicsVariables.hh"
 
-#define EDEP_THRESHOLD 0.50  /*MeV*/
+#define EDEP_THRESHOLD 0.250  /*MeV*/
 /*MeV This threshold is a per detector low value in SOI selection */
 double NpolEventProcessing::LOW_THRESHOLD = 0.040;
 /* number of analyzer layers; not general; only good for 4 and 6 layers */
@@ -59,12 +59,14 @@ void NpolEventProcessing::fillDetectorEventMap(std::map<std::string,NpolDetector
 	
 	if((AVNum == 2)){
 	  PProcess->AnalyzerHitPosition(hitPos, lPos, detNums);
+	} else if((AVNum == 3)){
+	  PProcess->INFNFrontTrackerHitPosition(hitPos, lPos, detNums);
 	} else if((AVNum == 4)){
-	  PProcess->TaggerHitPosition(hitPos, lPos, detNums);
+	  PProcess->UVaFrontTrackerHitPosition(hitPos, lPos, detNums);
 	} else if((AVNum == 5)){
-	  PProcess->DeltaEarrayHitPosition(hitPos, lPos, detNums);
+	  PProcess->UVaRecoilTrackerHitPosition(hitPos, lPos, detNums);
 	} else if((AVNum == 6) || (AVNum == 7)){
-	  PProcess->EarrayHitPosition(hitPos, lPos, detNums);
+	  PProcess->HodoscopeHitPosition(hitPos, lPos, detNums);
 	}
 	
 	(eventMap[aStep->volume])->hPosX = hitPos[0]; 
@@ -102,7 +104,7 @@ void NpolEventProcessing::fillVertexMap(std::map<int,NpolVertex *> &theVertexMap
 	  if(theVertexMap.find(TID) == theVertexMap.end()){
 		theVertexMap[TID] = new NpolVertex();
 		theVertexMap[TID] = copyVertex;
-	  }
+	  } 
 	}	
   }
 }
@@ -154,99 +156,7 @@ int NpolEventProcessing::sectionNumber(const std::string &volName) {
 
   // there is only one "secton" in RP-GEN
   return 0;
-  
-  /*if(LAYER_NUM == 4){
-    switch(avNum) {
-    case 1: // Top E array 1 
-    case 5: // Bottom E array 1
-    case 3: // Top dE array 1 
-    case 7: // Bottom dE array 1 
-      pvNum =  PProcess->GetPlacementNumber(volName);
-      if((pvNum <= 12) && (pvNum >= 6)) {return 0;}  // section 1
-      else if((pvNum <= 5) && (pvNum >= 0)) {return 1;}  // section 2
-      else {return -1;}
-    case 2: // Top E array 2
-	case 6: // Bottom E array 2
-    case 4: // Top dE array 2
-	case 8: // Bottom dE array 2
-      pvNum =  PProcess->GetPlacementNumber(volName);
-      if((pvNum <= 13) && (pvNum >= 7)) {return 2;}  // section 3
-      else if((pvNum <= 6) && (pvNum >= 0)) {return 3;}  // section 4
-      else {return -1;}
-    case 9: // Front array 1
-    case 11: // Front Veto array 1
-      imprNum =  PProcess->GetImprNumber(volName);
-      if(imprNum == 1) return 0;  // section 1
-      else if(imprNum == 2) return 1;  // section 2
-      else return -1;
-    case 10: // Front array 2
-    case 12: // Front Veto array 2
-      imprNum =  PProcess->GetImprNumber(volName);
-      if(imprNum == 1) return 2;  // section 3
-      else if(imprNum == 2) return 3;  // section 4
-      else return -1;
-    default:
-      return -1;
-    }
-  }else if(LAYER_NUM == 6){
-    switch(avNum) {
-    case 1: // Top E array 1 & 2
-    case 5: // Bottom E array 1 & 2
-      pvNum =  PProcess->GetPlacementNumber(volName);
-      imprNum =  PProcess->GetImprNumber(volName);
-      if((imprNum == 1) || (imprNum == 2)){
-		if(pvNum <= 12 && pvNum >= 6) return 0;  // section 1
-		else if(pvNum <= 5 && pvNum >= 0) return 1;  // section 2
-      }else if((imprNum == 3) || (imprNum == 4)){
-		if(pvNum <= 12 && pvNum >= 6) return 2;  // section 3
-		else if(pvNum <= 5 && pvNum >= 0) return 3;  // section 4
-      }else{
-		return -1;
-      }
-    case 3: // Top dE array 1 & 2
-    case 7: // Bottom dE array 1 & 2
-      pvNum =  PProcess->GetPlacementNumber(volName);
-      imprNum =  PProcess->GetImprNumber(volName);
-      if(imprNum == 1){
-		if(pvNum <= 12 && pvNum >= 6) return 0;  // section 1
-		else if(pvNum <= 5 && pvNum >= 0) return 1;  // section 2
-      }else if(imprNum == 2){
-		if(pvNum <= 12 && pvNum >= 6) return 2;  // section 3
-		else if(pvNum <= 5 && pvNum >= 0) return 3;  // section 4
-      }else{
-		return -1;
-      }
-    case 2: // Top E array 3
-    case 4: // Top dE array 3
-    case 6: // Bottom E array 3
-    case 8: // Bottom dE array 3
-      pvNum =  PProcess->GetPlacementNumber(volName);
-      if(pvNum <= 13 && pvNum >= 6) return 4;  // section 5
-      else if(pvNum <= 5 && pvNum >= 0) return 5;  // section 6
-      else return -1;
-    case 9: // Front array 1
-    case 12: // Front tag array 1
-      imprNum =  PProcess->GetImprNumber(volName);
-      if(imprNum == 1) return 0;  // section 1
-      else if(imprNum == 2) return 1;  // section 2
-      else return -1;
-    case 10: // Front array 2
-    case 13: // Front tag array 2
-      imprNum =  PProcess->GetImprNumber(volName);
-      if(imprNum == 1) return 2;  // section 3
-      else if(imprNum == 2) return 3;  // section 4
-      else return -1;
-    case 11:  // Front array 3
-    case 14:  // Front tag array 4
-      imprNum =  PProcess->GetImprNumber(volName);
-      if(imprNum == 1) return 4;  // section 5
-      else if(imprNum == 2) return 5;  // section 6
-      else return -1;
-    default:
-      return -1;
-    }
-  } else { return -1;
-  }*/
+
 }
 
 // This method returns the NPOL detector "type" which is defined as the following:
@@ -262,43 +172,18 @@ PolarimeterDetector NpolEventProcessing::detectorType(const std::string &volName
   int avNum = PProcess->GetAVNumber(volName);
   int imprNum = PProcess->GetImprNumber(volName);
   switch(avNum) {
-  case 2: return analyzer;
-  case 6: return topEArray;
-  case 7: return botEArray;
-  case 4: {
-	if((imprNum == 1) || (imprNum == 2)) return topdEArray;
-	if((imprNum == 3) || (imprNum == 4)) return botdEArray;
-  }
   case 1: return hCal;
+  case 2: return analyzer;
+  case 3: return infnGEM;
+  case 4: return uvaFront;
+  case 5: {
+	if((imprNum == 1) || (imprNum == 2)) return topdEArray; //UVa wing GEM left
+	if((imprNum == 3) || (imprNum == 4)) return botdEArray; //UVa wing GEM right
+  }
+  case 6: return topEArray; //Left hodoscope
+  case 7: return botEArray; //Right hodoscope
   default: return unknown;
   }
-  
-  /*int avNum = PProcess->GetAVNumber(volName);
-  if(LAYER_NUM == 4){
-    switch(avNum) {
-    case 1: case 2: return topEArray;
-    case 5: case 6: return botEArray;
-    case 3: case 4: return topdEArray;
-    case 7: case 8: return botdEArray;
-    case 9: case 10: return analyzer;
-    case 11: case 12: return tagger;
-    case 13: return backPlane;
-    default: return unknown;
-    }
-  }else if(LAYER_NUM == 6){
-    switch(avNum) {
-    case 1: case 2: return topEArray;
-    case 5: case 6: return botEArray;
-    case 3: case 4: return topdEArray;
-    case 7: case 8: return botdEArray;
-    case 9: case 10: case 11: return analyzer;
-    case 12: case 13: case 14: return tagger;
-    case 15: return backPlane;
-    default: return unknown;
-    }
-  }else{
-	return unknown;
-	}*/
 }
 
 // Return the frontmost polarimeter section that passes requirements 1 and 2.
@@ -316,7 +201,7 @@ int NpolEventProcessing::getSectionOfInterest(const std::map<std::string,NpolDet
 	for(it = detEvents->begin(); it != detEvents->end(); it++) {
 	  if(sectionNumber(it->first) == section) {
 		AVNum =  PProcess->GetAVNumber(it->first);
-		if((AVNum >= 1) && (AVNum <=12)){
+		if((AVNum >= 2) && (AVNum <=7)){
 		  if(it->second->totEnergyDep >= LOW_THRESHOLD) totalDetHit++; 
 		}
 		switch(detectorType(it->first)) {
@@ -366,10 +251,10 @@ int NpolEventProcessing::getSectionOfInterest(const std::map<std::string,NpolDet
   }
 
   // Reject events with more than 40 detectors with hits above 0.040 MeV; Otherwise return the ID'd section of interest
-  if((sectionOfInterest != -1) && (totalDetHit >= 40)) { 
+  /*if((sectionOfInterest != -1) && (totalDetHit >= 40)) { 
 	std::cout << "Event #  Rejected! Total number of detectors with 40 keV or greater: " << totalDetHit << std::endl;
 	  sectionOfInterest = -1;
-  }
+	  }*/
   
   return sectionOfInterest;
 }
