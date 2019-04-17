@@ -223,16 +223,16 @@ void NpolPolarimeter::ConstructPolarimeterFluxTagger(G4LogicalVolume *motherLV){
   double width = 100*cm; double height = 150*cm; double thick = 0.1*cm;
   double xPos,zPos; double tagLocation = 380*cm;
 
-  G4Box *polarimeterTagger = new G4Box("polarimeterTagger",width/2,height/2,thick/2);
-  G4LogicalVolume *polarimeterTaggerLV = new G4LogicalVolume(polarimeterTagger,NpolMaterials::GetInstance()->GetMaterial("HardVacuum"),"polarimeterTaggerLV",0,0,0);
-  G4VisAttributes *TaggerVisAtt = new G4VisAttributes(G4Colour(0.2, 0.2, 0.2));
-  //polarimeterTaggerLV->SetVisAttributes(TaggerVisAtt);
-  polarimeterTaggerLV->SetVisAttributes(G4VisAttributes::GetInvisible());
+  G4Box *NPOLTagger = new G4Box("NPOLTagger",width/2,height/2,thick/2);
+  G4LogicalVolume *NPOLTaggerLV = new G4LogicalVolume(NPOLTagger,NpolMaterials::GetInstance()->GetMaterial("HardVacuum"),"NPOLTaggerLV",0,0,0);
+  //G4VisAttributes *NPOLTaggerVisAtt = new G4VisAttributes(G4Colour(0.2, 0.2, 0.2));
+  //NPOLTaggerLV->SetVisAttributes(NPOLTaggerVisAtt);
+  NPOLTaggerLV->SetVisAttributes(G4VisAttributes::GetInvisible());
   
   xPos = -(tagLocation)*sin(NpolAng);
   zPos = +(tagLocation)*cos(NpolAng);
 
-  PlaceRectangular(polarimeterTaggerLV, motherLV, "polarimeterTagger", xPos, 0.0*cm, zPos, 0*deg, -NpolAng, 0*deg);
+  PlaceRectangular(NPOLTaggerLV, motherLV, "NPOLTagger", xPos, 0.0*cm, zPos, 0*deg, -NpolAng, 0*deg);
 }
 
 void NpolPolarimeter::ConstructFakeGEM(G4LogicalVolume *motherLV){
@@ -274,10 +274,10 @@ void NpolPolarimeter::ConstructFakeGEM(G4LogicalVolume *motherLV){
 
   // Two INFN GEMs in front of Cu analyzer
   infnZpos = CuAnalyzerPos + -39.53*cm;
-  tm.setX(-infnZpos*sin(NpolAng)); tm.setY(infnYpos); tm.setZ(infnZpos*cos(NpolAng));
+  tm.setX(infnXpos-infnZpos*sin(NpolAng)); tm.setY(infnYpos); tm.setZ(infnZpos*cos(NpolAng));
   ImprintPlate(infnModule,motherLV, tm, rm);
   infnZpos = CuAnalyzerPos + -27.24*cm;
-  tm.setX(-infnZpos*sin(NpolAng)); tm.setY(infnYpos); tm.setZ(infnZpos*cos(NpolAng));
+  tm.setX(infnXpos-infnZpos*sin(NpolAng)); tm.setY(infnYpos); tm.setZ(infnZpos*cos(NpolAng));
   ImprintPlate(infnModule,motherLV, tm, rm);
 
   // Two UVa GEMs in from of Cu analyzer
@@ -331,8 +331,8 @@ void NpolPolarimeter::ConstructFakeGEM(G4LogicalVolume *motherLV){
 void NpolPolarimeter::Place(G4LogicalVolume *motherLV) {
   
   copperAnalyzer->Place(motherLV);
-  ConstructVertAnalyzer(motherLV);
-  //ConstructAnalyzerArray(motherLV);
+  //ConstructVertAnalyzer(motherLV);
+  ConstructAnalyzerArray(motherLV);
   ConstructFakeGEM(motherLV); // Just scintillator sheets in place of GEMs for tracking
   ConstructHodoscopeArray(motherLV);
   ConstructPolarimeterFluxTagger(motherLV);
