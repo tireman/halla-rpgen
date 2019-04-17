@@ -207,23 +207,6 @@ int main(int argc, char *argv[]) {
 	// quasielastic events via looking at the number of particles in the final state.  I first considered this
 	// and Andrei confirmed my ideas and sent me how they sorted it out.
 	// This is to analyze simulation output for "real" (n,p) scattering events
-
-	// W.T.  Added this piece of code (15-April-2019) so I could figure out if geometry is correct.
-	std::vector<NpolVertex *>::iterator vert_it;
-	for(vert_it = verts->begin(); vert_it != verts->end(); vert_it++){
-	  NpolVertex *avertex = *vert_it;
-	  if(avertex == NULL) continue;
-	  double curPos[3] = { avertex->lPosX, avertex->lPosY, avertex->lPosZ };
-	  double newPos[3] = { 0., 0., 0.};
-	  double rotMat[3][3] = { {-1.,0.,0.}, {0.,0.,1.}, {0.,1.,0.} };
-	  PProcess->RotateG4ToRoot(curPos,newPos,rotMat);
-	  double X = 0, Y = 0, Z =0;
-	  X = avertex->gPosX; Y = avertex->gPosY; Z = avertex->gPosZ;
-	  HistoMan->FillHistograms("Hit_Position_3D",-X,Z,Y);//-avertex->gPosX,avertex->gPosZ,avertex->gPosY);
-	
-	}
-	//  End 3D histogram code added by W.T.
-	
 	
 	int npSOI = -2; int npPID = -1; int stepCount = -1;
 	bool inelasticFlag = false; bool elasticFlag = false;
@@ -321,15 +304,15 @@ int main(int argc, char *argv[]) {
 	  double elasticMomentum = PhysVars->computeElasticMomentum(projNeutron4Vec, computedRecoilAngle*TMath::DegToRad());
 	  double projectileNeutronMom = PhysVars->returnParticleMomentum(projNeutron4Vec);
 	  
-	  if(elasticFlag) std::cout << "Elastic Event" << std::endl;
+	  /*if(elasticFlag) std::cout << "Elastic Event" << std::endl;
 	  if(inelasticFlag) std::cout << "InElastic Event" << std::endl;
 	  if(quasielasticFlag) std::cout << "Quasi-elastic Event" << std::endl;
 	  std::cout << "  Leading TID: " << leadingTID << std::endl;
 	  std::cout << "  Recoil Angle Computed: " << computedRecoilAngle << std::endl;
 	  std::cout << "  Neutron Momentum before: " <<  projectileNeutronMom << std::endl;
 	  std::cout << "  Leading Particle Momentum: " << leadingParticleMomentum << std::endl;
-	  std::cout << "  Elastic Momentum: " << elasticMomentum << std::endl;
-	  Process->printVertexMap(vertexMap,i);
+	  std::cout << "  Elastic Momentum: " << elasticMomentum << std::endl;*/
+	  //Process->printVertexMap(vertexMap,i); // W.T. 16-April-2019
 	  
 	  if(elasticFlag) HistoMan->FillHistograms("NP_RecoilMomentum_Elastic",(leadingParticleMomentum - elasticMomentum));
 	  if(inelasticFlag) HistoMan->FillHistograms("NP_RecoilMomentum_InElastic",(leadingParticleMomentum - elasticMomentum));
@@ -405,9 +388,9 @@ int main(int argc, char *argv[]) {
 		  HistoMan->FillHistograms("NP_asymmetry_QuasiElastic",asym);
 	  }
 		// An attempt at "energy" resolution of the scints
-		std::cout << "Stopping Power = " << sPower
-				  << "   Proton Energy Loss in dE-array = " << dEenergyLost
-				  << "   Proton Energy Loss in E-array = " << EenergyLost << std::endl;
+		//std::cout << "Stopping Power = " << sPower
+		//		  << "   Proton Energy Loss in dE-array = " << dEenergyLost
+		//		  << "   Proton Energy Loss in E-array = " << EenergyLost << std::endl;
 	  }
 	}
 	
@@ -431,10 +414,10 @@ int main(int argc, char *argv[]) {
 	  int imprintNum = PProcess->GetImprNumber(aStep->volume);
 	  
 	  if((!eventFlag) && (aStep->parentId == 0) && (aStep->trackId == 1) && (aStep->particleId == 2112) 
-		 && (AVNum == 11) && (imprintNum == 1)) {
+		 && (AVNum == 2) && (imprintNum == 1)) {
 		taggedEvents++;
 		eventFlag = true;
-		
+	
 		// More Neutron Diagnostics!	
 		double xMom = aStep->momX; double yMom = aStep->momY; double zMom = aStep->momZ;
 		double totMom = PhysVars->computeMomentum(xMom,yMom,zMom);
@@ -444,6 +427,7 @@ int main(int argc, char *argv[]) {
 		
 		t_it = tagEvent->begin();
 		NpolTagger *tTemp = *t_it;
+		
 		if(elasticFlag){
 		  HistoMan->FillHistograms("ND_NeutronEnergy_Elastic",(tTemp->energy));
 		  HistoMan->FillHistograms("ND_NeutronMomentum_Elastic",totMom);
@@ -463,11 +447,29 @@ int main(int argc, char *argv[]) {
 	  Process->fillDetectorEventMap(detEvents,aStep);
 	  // ****** End of the hit position computations section ******* //
 	} // END STEPS LOOP
+
+	
+	// W.T.  Added this piece of code (17-April-2019) so I could figure out if geometry is correct.
+	std::map<std::string, NpolDetectorEvent *>::iterator det_it;
+	for(det_it = detEvents.begin(); det_it != detEvents.end(); det_it++){
+	  if(PProcess->GetAVNumber(det_it->first) != -1){
+		double X = 0, Y = 0, Z =0;
+		double curPos[3] = { det_it->second->hPosX, det_it->second->hPosY, det_it->second->hPosZ };
+		double newPos[3] = { 0., 0., 0.};
+		double rotMat[3][3] = { {-1.,0.,0.}, {0.,0.,1.}, {0.,1.,0.} };
+		PProcess->RotateG4ToRoot(curPos,newPos,rotMat);
+		//X = det_it->second->hPosX; Y = det_it->second->hPosY; Z = det_it->second->hPosZ;
+		X = newPos[0]; Y = newPos[1]; Z = newPos[2];
+		HistoMan->FillHistograms("Hit_Position_3D",X,Y,Z);//-avertex->gPosX,avertex->g
+	  }
+	}
+	//  End 3D histogram code added by W.T. (17-April-2019)
 	
 	
 	// ***** This Section will retrieve SOI and EOI and then make event selections based on cuts ******* //
     // First, we determine the SOI; then we check the other requirements and fill the histograms
 	int sectionOfInterest = Process->getSectionOfInterest(&detEvents); // call method to determine SOI
+	if(sectionOfInterest >= 0) std::cout << "Section of Interest: " << sectionOfInterest << std::endl;
 	
 	if(sectionOfInterest != -1) {
 	  if(elasticFlag) HistoMan->FillHistograms("RA_section1Efficiency_Elastic",(sectionOfInterest+1)); // Fill first SOI histogram
@@ -495,7 +497,7 @@ int main(int argc, char *argv[]) {
 		double dTOF = -100.0;
 		double azAngle = PhysVars->ReturnAngle(verts->at(1),&detEvents,sectionOfInterest,EArrayOfInterest,&dTOF);
 		
-		if(eDepAnalyzer >= 4.0 /*MeV*/ && eDepE >= 5.0 /*MeV */ && eDepTotal >= 50.0 /*MeV*/) { // Req. 3 and 4
+		if(eDepAnalyzer >= 2.0 /*MeV*/ && eDepE >= 0.50 /*MeV */ && eDepTotal >= 3.0 /*MeV*/) { // Req. 3 and 4
 		  if(elasticFlag){
 			HistoMan->FillHistograms("RA_section3Efficiency_Elastic",(sectionOfInterest+1)); //FILL
 			HistoMan->FillHistograms("RA_recoilAngleRaw_Elastic",azAngle);
@@ -560,7 +562,7 @@ int main(int argc, char *argv[]) {
 	recoilParticle4Vec.second.clear();
 	projNeutron4Vec.second.clear();
 	scattNeutron4Vec.second.clear();
-	scattParticle4Vec.second.clear();
+	scattParticle4Vec.second.clear(); 
 	
   }	// END EVENT LOOP
   
