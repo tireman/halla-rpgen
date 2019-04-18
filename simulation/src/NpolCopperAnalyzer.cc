@@ -28,6 +28,8 @@
 #include "NpolPolarimeter.hh"
 
 G4double NpolCopperAnalyzer::CopperThickness = 4.0*cm;  // thickness of the Cu analyzer
+G4double NpolCopperAnalyzer::CopperHeight = 202*cm;
+G4double NpolCopperAnalyzer::CopperWidth = 62.0*cm;
 G4double NpolCopperAnalyzer::PosCopper = NpolPolarimeter::CuAnalyzerPos;
 
 NpolCopperAnalyzer::NpolCopperAnalyzer() {
@@ -43,10 +45,7 @@ G4String NpolCopperAnalyzer::GetName() {
 // Construct a copper shield for in front of the polarimeter
 void NpolCopperAnalyzer::ConstructCopperAnalyzer(){
 
-  G4double xlen = 62.0*cm; 
-  G4double ylen = 202.0*cm; 
-
-  G4Box *CopperAnalyzer = new G4Box("CopperAnalyzer",xlen/2,ylen/2,CopperThickness/2);
+  G4Box *CopperAnalyzer = new G4Box("CopperAnalyzer",CopperWidth/2,CopperHeight/2,CopperThickness/2);
   CopperAnalyzerLV = new G4LogicalVolume(CopperAnalyzer,NpolMaterials::GetInstance()->GetMaterial("Cu"),"CopperAnalyzerLV",0,0,0);
   G4VisAttributes *CopperAnalyzerVisAtt = new G4VisAttributes(G4Colour(1.0, 0.7, 0.2));
   CopperAnalyzerLV->SetVisAttributes(CopperAnalyzerVisAtt);
