@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source /home/tireman/simulation/jlab/nmu-npol/analysis/envscripts/NMUsetupAnalysis.sh
+source /home/tireman/simulation/jlab/nmu-npol/env_setup/NMUnpolVariables.sh
 
 for ((i=$1; i<=$2; i++))
 do
