@@ -68,20 +68,20 @@ void SimulationFigures() {
   Double_t targetTheta = 250.0e-3;  // Target Tagger // horizontal angular accecptance (radians)
   Double_t targetPhi = 450.0e-3; // Target Tagger // // vertical angular acceptance (radians)
   Double_t targetD = 185.0;  // Position of target tagger (cm)
-  Double_t targetW = 2*targetD*TMath::Tan(targetTheta/2);  // height of target tagger (cm)
-  Double_t targetL = 2*targetD*TMath::Tan(targetPhi/2);   // width of target tagger (cm)
+  Double_t targetH = 2*targetD*TMath::Tan(targetTheta/2);  // height of target tagger (cm)
+  Double_t targetW = 2*targetD*TMath::Tan(targetPhi/2);   // width of target tagger (cm)
   Double_t npolD = 380.0;  // Position of Npol Tagger (cm)683.89
   Double_t npolTheta = 389.73e-3; // Npol Tagger // Vertical angular acceptance (radians)
   Double_t npolPhi = 261.65e-3; // Npol Tagger // Horizontal angular acceptance (radians)
-  Double_t npolW = 2*npolD*TMath::Tan(npolTheta/2);  // height of npol tagger (cm)
-  Double_t npolL = 2*npolD*TMath::Tan(npolPhi/2);  // width of npol tagger (cm)
+  Double_t npolH = 2*npolD*TMath::Tan(npolTheta/2);  // height of npol tagger (cm)
+  Double_t npolW = 2*npolD*TMath::Tan(npolPhi/2);  // width of npol tagger (cm)
 
-  Double_t targetAlpha = targetW/(2*targetD);   // Constant needed for solid angle
-  Double_t npolAlpha = npolW/(2*npolD);  // Constant needed for solid angle
+  Double_t targetAlpha = targetH/(2*targetD);   // Constant needed for solid angle
+  Double_t npolAlpha = npolH/(2*npolD);  // Constant needed for solid angle
   
   // Solid angle calculation! 
-  Double_t targetSolidAngle = 8*(TMath::ATan(targetL/targetW)-TMath::ASin(targetL/TMath::Sqrt((1+TMath::Power(targetAlpha,2))*(TMath::Power(targetL,2)+TMath::Power(targetW,2)))));
-  Double_t npolSolidAngle = 8*(TMath::ATan(npolL/npolW)-TMath::ASin(npolL/TMath::Sqrt((1+TMath::Power(npolAlpha,2))*(TMath::Power(npolL,2)+TMath::Power(npolW,2)))));
+  Double_t targetSolidAngle = 8*(TMath::ATan(targetW/targetH)-TMath::ASin(targetW/TMath::Sqrt((1+TMath::Power(targetAlpha,2))*(TMath::Power(targetW,2)+TMath::Power(targetH,2)))));
+  Double_t npolSolidAngle = 8*(TMath::ATan(npolW/npolH)-TMath::ASin(npolW/TMath::Sqrt((1+TMath::Power(npolAlpha,2))*(TMath::Power(npolW,2)+TMath::Power(npolH,2)))));
   
   std::cout << "Target solid angle = " << targetSolidAngle << std::endl;
   std::cout << "Npol solid angle = " << npolSolidAngle << std::endl;
@@ -190,10 +190,10 @@ void SimulationFigures() {
   plotSettings.xTitle = "Horizontal Position (cm)"; 
   plotSettings.yTitle = "Vertical Position (cm)"; 
   plotSettings.zTitle = "#frac{Particles}{#muA #times cm^{2}}";
-  plotSettings.Ranges.insert(std::pair<std::string, Double_t>("xLow",220.0)); 
-  plotSettings.Ranges.insert(std::pair<std::string, Double_t>("xHigh",370.0));
-  plotSettings.Ranges.insert(std::pair<std::string, Double_t>("yLow",-70.0)); 
-  plotSettings.Ranges.insert(std::pair<std::string, Double_t>("yHigh",70.0));
+  plotSettings.Ranges.insert(std::pair<std::string, Double_t>("xLow",-npolW/2));//220.0)); 
+  plotSettings.Ranges.insert(std::pair<std::string, Double_t>("xHigh",npolW/2));//370.0));
+  plotSettings.Ranges.insert(std::pair<std::string, Double_t>("yLow",-npolH/2)); 
+  plotSettings.Ranges.insert(std::pair<std::string, Double_t>("yHigh",npolH/2));
   plotSettings.Ranges.insert(std::pair<std::string, Double_t>("zLow",0.0)); 
   plotSettings.Ranges.insert(std::pair<std::string, Double_t>("zHigh",1000.0));
   
@@ -299,82 +299,84 @@ void FillCanvas(TCanvas *C, Double_t scaleFactor, TFile *inFile, std::string his
 	  pad[i][j] = (TPad*) gROOT->FindObject(pname);
 	  pad[i][j]->Draw();
 	  if((*plotSettings.plotFlags.find("xAxis")).second) pad[i][j]->SetLogx();
-  if((*plotSettings.plotFlags.find("yAxis")).second) pad[i][j]->SetLogy();
-  if((*plotSettings.plotFlags.find("zAxis")).second) pad[i][j]->SetLogy();
-  pad[i][j]->SetFillStyle(4000);
-  pad[i][j]->SetFrameFillStyle(4000);
-  pad[i][j]->SetGrid(1,1);
-  pad[i][j]->cd();
-  // Size factors
-  Float_t xFactor = pad[0][0]->GetAbsWNDC()/pad[i][j]->GetAbsWNDC();
-  Float_t yFactor = pad[0][0]->GetAbsHNDC()/pad[i][j]->GetAbsHNDC();
-  
-  char hname[32];
-  sprintf(hname,"%s_%s",plotSettings.leadName.c_str(),histoNames[i][j].c_str());
-  TH1F *hFrame = (TH1F*) inFile->Get(hname);
-  hFrame->SetStats(false); 
-  hFrame->SetFillColor(kBlue);
-  hFrame->SetTitleFont(16);     
-  hFrame->SetOption(plotSettings.plotStyle.c_str());
-  hFrame->SetFillStyle(plotSettings.fillStyle);
+	  if((*plotSettings.plotFlags.find("yAxis")).second) pad[i][j]->SetLogy();
+	  if((*plotSettings.plotFlags.find("zAxis")).second) pad[i][j]->SetLogy();
+	  pad[i][j]->SetFillStyle(4000);
+	  pad[i][j]->SetFrameFillStyle(4000);
+	  pad[i][j]->SetGrid(1,1);
+	  pad[i][j]->cd();
+	  // Size factors
+	  Float_t xFactor = pad[0][0]->GetAbsWNDC()/pad[i][j]->GetAbsWNDC();
+	  Float_t yFactor = pad[0][0]->GetAbsHNDC()/pad[i][j]->GetAbsHNDC();
+	  
+	  char hname[32];
+	  sprintf(hname,"%s_%s",plotSettings.leadName.c_str(),histoNames[i][j].c_str());
+	  TH1F *hFrame = (TH1F*) inFile->Get(hname);
+	  hFrame->SetStats(false); 
+	  hFrame->SetFillColor(kBlue);
+	  hFrame->SetTitleFont(16);     
+	  hFrame->SetOption(plotSettings.plotStyle.c_str());
+	  hFrame->SetFillStyle(plotSettings.fillStyle);
+	  
+	  Double_t totalParticles = hFrame->Integral();
+	  
+	  // Bin-by-bin scaling to the width of the bins in eVs
+	  if((*plotSettings.plotFlags.find("binScale")).second){	
+		for(int i = 1; i <= hFrame->GetNbinsX()-2; i++){
+		  double oldbincontent = hFrame->GetBinContent(i);
+		  double scalingfactor = scaleFactor/TMath::Log10(hFrame->GetBinWidth(i)*1e6);
+		  hFrame->SetBinContent(i,oldbincontent*scalingfactor);
+		}
+	  } else {
+		hFrame->Scale(scaleFactor);
+	  }
+	  
+	
+	  
+	  if(plotSettings.leadName == "npolXY"){
+		hFrame->GetZaxis()->SetTitle(plotSettings.zTitle.c_str());    // Format for Z axis
+		hFrame->GetZaxis()->SetRangeUser(0.001,1.10*hFrame->GetMaximum()); // Z axis range
+	  }
+	  // y axis range 
+	  hFrame->GetYaxis()->SetRangeUser((*plotSettings.Ranges.find("yLow")).second ,(*plotSettings.Ranges.find("yHigh")).second);
+	  
+	  // Format for y axis
+	  hFrame->GetYaxis()->SetTitle(plotSettings.yTitle.c_str());
+	  hFrame->GetYaxis()->SetLabelFont(43);
+	  hFrame->GetYaxis()->SetLabelSize(16);
+	  hFrame->GetYaxis()->SetLabelOffset(0.02);
+	  hFrame->GetYaxis()->SetTitleFont(43);
+	  hFrame->GetYaxis()->SetTitleSize(16);
+	  hFrame->GetYaxis()->SetTitleOffset(5);
+	  //hFrame->SetGridY();
+	  hFrame->GetYaxis()->CenterTitle();
+	  hFrame->GetYaxis()->SetNdivisions(505);
+	  
+	  // TICKS Y Axis
+	  hFrame->GetYaxis()->SetTickLength(yFactor*0.04/yFactor);
+	  
+	  // Format for x axis
+	  hFrame->GetXaxis()->SetTitle(plotSettings.xTitle.c_str());
+	  hFrame->GetXaxis()->SetLabelFont(43);
+	  hFrame->GetXaxis()->SetLabelSize(16);
+	  hFrame->GetXaxis()->SetLabelOffset(0.02);
+	  hFrame->GetXaxis()->SetTitleFont(43);
+	  hFrame->GetXaxis()->SetTitleSize(16);
+	  hFrame->GetXaxis()->SetTitleOffset(5);
+	  
+	  hFrame->GetXaxis()->CenterTitle();
+	  hFrame->GetXaxis()->SetNdivisions(505);
+	  
+	  // Set X axis range
+	  hFrame->GetXaxis()->SetRangeUser((*plotSettings.Ranges.find("xLow")).second ,(*plotSettings.Ranges.find("xHigh")).second);
+	  
+	  // TICKS X Axis
+	  hFrame->GetXaxis()->SetTickLength(xFactor*0.06/xFactor);
+	  hFrame->Draw();
 
-  Double_t totalParticles = hFrame->Integral();
-
-  // Bin-by-bin scaling to the width of the bins in eVs
-  if((*plotSettings.plotFlags.find("binScale")).second){	
-    for(int i = 1; i <= hFrame->GetNbinsX()-2; i++){
-      double oldbincontent = hFrame->GetBinContent(i);
-      double scalingfactor = scaleFactor/TMath::Log10(hFrame->GetBinWidth(i)*1e6);
-	  hFrame->SetBinContent(i,oldbincontent*scalingfactor);
-    }
-  } else {
-    hFrame->Scale(scaleFactor);
+	  hFrame->SetDirectory(0);
+	}
   }
-  
-  hFrame->Draw();
-    
-  if(plotSettings.leadName == "npolXY"){
-  hFrame->GetZaxis()->SetTitle(plotSettings.zTitle.c_str());    // Format for Z axis
-  hFrame->GetZaxis()->SetRangeUser(0.001,1.10*hFrame->GetMaximum()); // Z axis range
-}
-  // y axis range 
-  hFrame->GetYaxis()->SetRangeUser((*plotSettings.Ranges.find("yLow")).second ,(*plotSettings.Ranges.find("yHigh")).second);
-  
-  // Format for y axis
-  hFrame->GetYaxis()->SetTitle(plotSettings.xTitle.c_str());
-  hFrame->GetYaxis()->SetLabelFont(43);
-  hFrame->GetYaxis()->SetLabelSize(16);
-  hFrame->GetYaxis()->SetLabelOffset(0.02);
-  hFrame->GetYaxis()->SetTitleFont(43);
-  hFrame->GetYaxis()->SetTitleSize(16);
-  hFrame->GetYaxis()->SetTitleOffset(5);
-  //hFrame->SetGridY();
-  hFrame->GetYaxis()->CenterTitle();
-  hFrame->GetYaxis()->SetNdivisions(505);
-  
-  // TICKS Y Axis
-  hFrame->GetYaxis()->SetTickLength(xFactor*0.04/yFactor);
-  
-  // Format for x axis
-  hFrame->GetXaxis()->SetTitle(plotSettings.yTitle.c_str());
-  hFrame->GetXaxis()->SetLabelFont(43);
-  hFrame->GetXaxis()->SetLabelSize(16);
-  hFrame->GetXaxis()->SetLabelOffset(0.02);
-  hFrame->GetXaxis()->SetTitleFont(43);
-  hFrame->GetXaxis()->SetTitleSize(16);
-  hFrame->GetXaxis()->SetTitleOffset(5);
-  
-  hFrame->GetXaxis()->CenterTitle();
-  hFrame->GetXaxis()->SetNdivisions(505);
-  
-  // Set X axis range
-  hFrame->GetXaxis()->SetRangeUser((*plotSettings.Ranges.find("xLow")).second ,(*plotSettings.Ranges.find("xHigh")).second);
-  
-  // TICKS X Axis
-  hFrame->GetXaxis()->SetTickLength(yFactor*0.06/xFactor);
-  hFrame->SetDirectory(0);
-  }
-}
   std::cout << "number of particles = " << totalParticles << std::endl;
 }
 
