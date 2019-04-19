@@ -58,10 +58,10 @@ int main(int argc, char *argv[]) {
   Double_t NpolAng = 0.431096; // radians (28 degrees) NPOL angle from beamline
   Double_t targetTaggerPos = 185.0;  // Position of target tagger (cm)
   Double_t npolTaggerPos = 380.0;  // Position of NPOL Tagger (cm) 681.50 for 7 meter
-  Double_t targetVertAngle = 0.450; //rad; // flipped for RP-GEN
-  Double_t targetHorAngle = 0.250; //rad;  //
-  Double_t npolHorAngle = 0.330297; // NPOL horizontal angular accecptance (radians)
-  Double_t npolVertAngle = 0.489957; // NPOL vertical angular acceptance (radians)
+  Double_t targetVertAngle = 0.450; // (radians) flipped for RP-GEN
+  Double_t targetHorAngle = 0.250; // (radians) 
+  Double_t npolHorAngle = 0.26165; // NPOL horizontal angular accecptance (radians)
+  Double_t npolVertAngle = 0.38973; // NPOL vertical angular acceptance (radians)
   
   // ******* Tagger acceptance computations.  ALL SIZES ARE FULL WIDTH/HEIGHT ******** //
   // Compute or Manually set the size of the histograms and cuts for filling histograms (X,Y) position
