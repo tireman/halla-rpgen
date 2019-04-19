@@ -55,11 +55,13 @@ int main(int argc, char *argv[]) {
   TChain *npolTree = new TChain("T");
   TChain *statsTree = new TChain("T2");
 
-  Double_t NpolAng = 0.488692; // radians (28 degrees) NPOL angle from beamline
-  Double_t targetTaggerPos = 150.0;  // Position of target tagger (cm)
-  Double_t npolTaggerPos = 681.50;  // Position of NPOL Tagger (cm) 681.50 for 7 meter
-  Double_t theta = 0.160; // NPOL horizontal angular accecptance (radians)
-  Double_t phi = 0.100; // NPOL vertical angular acceptance (radians)
+  Double_t NpolAng = 0.431096; // radians (28 degrees) NPOL angle from beamline
+  Double_t targetTaggerPos = 185.0;  // Position of target tagger (cm)
+  Double_t npolTaggerPos = 380.0;  // Position of NPOL Tagger (cm) 681.50 for 7 meter
+  Double_t targetVertAngle = 0.450; //rad; // flipped for RP-GEN
+  Double_t targetHorAngle = 0.250; //rad;  //
+  Double_t npolHorAngle = 0.330297; // NPOL horizontal angular accecptance (radians)
+  Double_t npolVertAngle = 0.489957; // NPOL vertical angular acceptance (radians)
   
   // ******* Tagger acceptance computations.  ALL SIZES ARE FULL WIDTH/HEIGHT ******** //
   // Compute or Manually set the size of the histograms and cuts for filling histograms (X,Y) position
@@ -67,16 +69,16 @@ int main(int argc, char *argv[]) {
   // This may be a different acceptance for both NPOL and Target Taggers
 
   // This version uses the fixed angular acceptance for the sizing of the collimator
-  //Double_t targetW = 2*targetTaggerPos*TMath::Tan(theta/2);  // width of target tagger (cm)
-  //Double_t targetH = 2*targetTaggerPos*TMath::Tan(phi/2);   // height of target tagger (cm)
-  //Double_t npolW = 2*npolTaggerPos*TMath::Tan(theta/2);  // width of npol tagger (cm)
-  //Double_t npolH = 2*npolTaggerPos*TMath::Tan(phi/2);  // height of npol tagger (cm)
+  Double_t targetW = 2*targetTaggerPos*TMath::Tan(targetHorAngle/2);  // width of target tagger (cm)
+  Double_t targetH = 2*targetTaggerPos*TMath::Tan(targetVertAngle/2);   // height of target tagger (cm)
+  Double_t npolW = 2*npolTaggerPos*TMath::Tan(npolVertAngle/2);  // width of npol tagger (cm)
+  Double_t npolH = 2*npolTaggerPos*TMath::Tan(npolHorAngle/2);  // height of npol tagger (cm)
 
   // This version allows for fixing the size manually
-  Double_t targetW = 70.00;  // width of target tagger (cm) Dipole 1 opening 56.0 cm
-  Double_t targetH = 26.00;  // height of target tagger (cm) Dipole 1 opeing 20.955 cm
-  Double_t npolW = 2*npolTaggerPos*TMath::Tan(theta/2);  // width of npol tagger (cm)
-  Double_t npolH = 2*npolTaggerPos*TMath::Tan(phi/2);  // height of npol tagger (cm)
+  //Double_t targetW = 70.00;  // width of target tagger (cm) Dipole 1 opening 56.0 cm
+  //Double_t targetH = 26.00;  // height of target tagger (cm) Dipole 1 opeing 20.955 cm
+  //Double_t npolW = 2*npolTaggerPos*TMath::Tan(theta/2);  // width of npol tagger (cm)
+  //Double_t npolH = 2*npolTaggerPos*TMath::Tan(phi/2);  // height of npol tagger (cm)
   
   RetrieveENVvariables();
 
