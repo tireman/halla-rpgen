@@ -7,3 +7,5 @@ add_subdirectory(npollib)
 add_subdirectory(simulation)
 add_subdirectory(analysis)
 add_subdirectory(analysis2)
+add_subdirectory(analysis3)
+
