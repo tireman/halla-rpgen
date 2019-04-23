@@ -95,14 +95,18 @@ void NpolDipole2::ConstructDipole2Yoke(G4LogicalVolume *motherLV) {
 
 void NpolDipole2::ConstructDipole2LeadInsert(G4LogicalVolume *motherLV){
   
-  G4Box *leadBox =
-	new G4Box("leadBox",  (68.0/2)*cm, (32.0/2)*cm, (60/2)*cm);
+  G4Box *beamlineCutout =
+	new G4Box("beamlineCutout", (46.38/2)*cm, (33.2/2)*cm, (122/4)*cm);
+  G4Trap *beamlineTrap =
+	new G4Trap("beamlineTrap", /*36.57*/29.39*cm, 22.21*cm, 25.72*cm/2, 33.2*cm/2, 122*cm/4);
+  G4UnionSolid *leadThing = new G4UnionSolid("leadThing",beamlineCutout,beamlineTrap,0,G4ThreeVector(-(92.465*cm-69.285*cm),0,0));
+
   leadInsertLV =
-	new G4LogicalVolume(leadBox,NpolMaterials::GetInstance()->GetMaterial("Pb"),"leadInsertLV",0,0,0);
+	new G4LogicalVolume(leadThing,NpolMaterials::GetInstance()->GetMaterial("Pb"),"leadInsertLV",0,0,0);
   
   G4VisAttributes *leadVisAtt=  new G4VisAttributes(G4Colour(1.0,0.5,1.0));
   leadInsertLV->SetVisAttributes(leadVisAtt);
-  G4double xOffset = 81.0*cm; G4double zOffset = 30.0*cm;
+  G4double xOffset = 93.0*cm; G4double zOffset = 30.5*cm;
   G4double xPos
 	= xOffset*cos(-NpolAng) + zOffset*sin(-NpolAng) - (PosD2)*sin(NpolAng);
   G4double zPos

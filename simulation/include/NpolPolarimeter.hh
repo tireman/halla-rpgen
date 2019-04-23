@@ -39,7 +39,7 @@ public:
   static const G4Colour CopperColor, SteelColor, ScintColor;
 
   void ConstructVertAnalyzer(G4LogicalVolume *motherLV);
-  void ConstructAnalyzerArray(G4LogicalVolume *motherLV);
+  void ConstructGlasgowAnalyzer(G4LogicalVolume *motherLV);
   void ConstructHodoscopeArray(G4LogicalVolume *motherLV);
   void ConstructFakeGEM(G4LogicalVolume *motherLV);
   void ConstructPolarimeterFluxTagger(G4LogicalVolume *motherLV);

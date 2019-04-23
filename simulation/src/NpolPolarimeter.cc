@@ -99,7 +99,7 @@ void NpolPolarimeter::ConstructVertAnalyzer(G4LogicalVolume *motherLV) {
   G4LogicalVolume *VertAnalyzerLV = new G4LogicalVolume(VertAnalyzer,
 	  NpolMaterials::GetInstance()->GetMaterial("Scint"),"VertAnalyzerLV",0,0,0);
   
-  G4AssemblyVolume *VertAnalyzerArray = new G4AssemblyVolume();
+  G4AssemblyVolume *VertAnalyzerAV = new G4AssemblyVolume();
   G4RotationMatrix Ra, Rm; 
   G4ThreeVector Ta, Tm;
   G4Transform3D Tr;
@@ -110,17 +110,17 @@ void NpolPolarimeter::ConstructVertAnalyzer(G4LogicalVolume *motherLV) {
   // Place the first of two LV in the assembly
   Ta.setX(NpolCopperAnalyzer::CopperWidth/2-vertAnalyzerX/2); Ta.setY(0.0*cm); Ta.setZ(0.0*cm);
   Tr = G4Transform3D(Ra,Ta);
-  VertAnalyzerArray->AddPlacedVolume(VertAnalyzerLV,Tr);
+  VertAnalyzerAV->AddPlacedVolume(VertAnalyzerLV,Tr);
   // Place the second of two LV in the assembly
   Ta.setX(-(62.0*cm/2-vertAnalyzerX/2)); 
   Tr = G4Transform3D(Ra,Ta);
-  VertAnalyzerArray->AddPlacedVolume(VertAnalyzerLV,Tr);
+  VertAnalyzerAV->AddPlacedVolume(VertAnalyzerLV,Tr);
   // Place one imprint of the assembly in the world
   Tm.setX(XPos - ZPos*sin(NpolAng)); Tm.setY(YPos); Tm.setZ(ZPos*cos(NpolAng));
   Rm.rotateX(0.0*deg);
   Rm.rotateY(-NpolAng);
   Rm.rotateZ(0.0*deg);
-  ImprintPlate(VertAnalyzerArray, motherLV, Tm, Rm);
+  ImprintPlate(VertAnalyzerAV, motherLV, Tm, Rm);
   
   G4VisAttributes *TopVisAtt= new G4VisAttributes(G4Colour(0.5,0.5,0.0));
   VertAnalyzerLV->SetVisAttributes(TopVisAtt);
@@ -131,7 +131,7 @@ void NpolPolarimeter::ConstructVertAnalyzer(G4LogicalVolume *motherLV) {
 // Analyzer array based on University of Glasgow prototype highly segmented array.
 // 4 x 8 scintillatory blocks each 4.0cm by 4.0cm by 25cm
 //---------------------------
-void NpolPolarimeter::ConstructAnalyzerArray(G4LogicalVolume *motherLV) {
+void NpolPolarimeter::ConstructGlasgowAnalyzer(G4LogicalVolume *motherLV) {
   
   G4double YPos = 0.0*m;  // y-direction (up-down of beam)
   G4double XPos = 0.0*m; // x-direction (left right of beam)
@@ -141,7 +141,7 @@ void NpolPolarimeter::ConstructAnalyzerArray(G4LogicalVolume *motherLV) {
   G4LogicalVolume *AnalyzerLV = new G4LogicalVolume(Analyzer,
 	  NpolMaterials::GetInstance()->GetMaterial("Scint"),"AnalyzerLV",0,0,0);
   
-  G4AssemblyVolume *AnalyzerArray = new G4AssemblyVolume();
+  G4AssemblyVolume *GlasgowAnalyzer = new G4AssemblyVolume();
   G4RotationMatrix Ra, Rm; 
   G4ThreeVector Ta, Tm;
   G4Transform3D Tr;
@@ -155,7 +155,7 @@ void NpolPolarimeter::ConstructAnalyzerArray(G4LogicalVolume *motherLV) {
 	  Ta.setX(6.0*cm - 4.0*cm*j); Ta.setY(+14.0*cm-4.0*cm*i);
 	  Ta.setZ(0.0*cm);
 	  Tr = G4Transform3D(Ra,Ta);
-	  AnalyzerArray->AddPlacedVolume(AnalyzerLV,Tr);
+	  GlasgowAnalyzer->AddPlacedVolume(AnalyzerLV,Tr);
 	}
   }
 
@@ -163,7 +163,7 @@ void NpolPolarimeter::ConstructAnalyzerArray(G4LogicalVolume *motherLV) {
   Rm.rotateX(0.0*deg);
   Rm.rotateY(-NpolAng);
   Rm.rotateZ(0.0*deg);
-  ImprintPlate(AnalyzerArray, motherLV, Tm, Rm);
+  ImprintPlate(GlasgowAnalyzer, motherLV, Tm, Rm);
   
   G4VisAttributes *TopVisAtt= new G4VisAttributes(G4Colour(0.5,0.5,0.0));
   AnalyzerLV->SetVisAttributes(TopVisAtt);
@@ -332,7 +332,7 @@ void NpolPolarimeter::Place(G4LogicalVolume *motherLV) {
   
   copperAnalyzer->Place(motherLV);
   //ConstructVertAnalyzer(motherLV);
-  ConstructAnalyzerArray(motherLV);
+  ConstructGlasgowAnalyzer(motherLV);
   ConstructFakeGEM(motherLV); // Just scintillator sheets in place of GEMs for tracking
   ConstructHodoscopeArray(motherLV);
   ConstructPolarimeterFluxTagger(motherLV);
