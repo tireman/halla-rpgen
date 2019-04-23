@@ -328,7 +328,7 @@ void NpolSBSBeamline::ConstructGEpLead(){
   //we want x position to have x = 
   G4double xpos_lead_wall2 = -(8.0*inch + 2.5*cm + (zpos_lead_wall2 - 201.632*inch + TargetCenter_zoffset )*tan(1.5*deg));
 
-  G4Box *lead_wall2 = new G4Box("lead_wall2", 10.0*cm/2.0, 1.00*m/2/*24.0*inch/2.0*/, 3.5*m/2 /*0.5*(zstop_lead_wall2 - zstart_lead_wall2)*/ );
+  G4Box *lead_wall2 = new G4Box("lead_wall2", 5.08*cm/2, 24.0*inch/2, 2.4384*m/2 /*0.5*(zstop_lead_wall2 - zstart_lead_wall2)*/ ); // 18-April-2019 <-- W.T. reduced sizes to those in CAD drawing from Feb. 2019
 
   lead_wall2_log = new G4LogicalVolume( lead_wall2, Mat->GetMaterial("Pb"), "lead_wall2_log" );
 
@@ -396,7 +396,7 @@ void NpolSBSBeamline::Place(G4LogicalVolume *motherLV) {
 	G4double xpos_lead_wall2 = -(8.0*inch + 2.5*cm + (zpos_lead_wall2 - 201.632*inch + TargetCenter_zoffset )*tan(1.5*deg));
 	
 	// Removed for RP-GEN PlaceRectangular(lead_wall1_log,motherLV,"lead_wall1_phys",xtemp,0.0,(zstart_lead_wall1+0.5*1.25*m),0.0*deg,1.5*deg,0.0*deg);
-	PlaceRectangular(lead_wall2_log,motherLV,"lead_wall2_phys", -10*cm + xpos_lead_wall2, 0, 5.2*m /*zpos_lead_wall2*/, 0.0*deg,-3.0*deg,0.0*deg);
+	PlaceRectangular(lead_wall2_log,motherLV,"lead_wall2_phys", -25*cm + xpos_lead_wall2, 0, 4.94*m /*zpos_lead_wall2*/, 0.0*deg,-0.0*deg,0.0*deg);
 	
   }
   

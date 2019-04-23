@@ -6,7 +6,7 @@ cat > jsubfile_SIM_$3_$i << EOF1
 PROJECT: cgen
 TRACK : simulation
 OS : centos7
-JOBNAME : RP-GEN_SIM_$3_$i
+JOBNAME : RP-GEN_run7_$3_$i
 MAIL: tireman@jlab.org
 TIME: 180
 MEMORY: 1400 MB

@@ -23,9 +23,9 @@
 #include "NpolMaterials.hh"
 
 NpolWorld::NpolWorld() {
-  //G4Box *expHall = new G4Box("ExpHall", 32.0*m, 30.0*m, 65.0*m); // Normal size (full sim)
+  G4Box *expHall = new G4Box("ExpHall", 32.0*m, 30.0*m, 65.0*m); // Normal size (full sim)
   //G4Box *expHall = new G4Box("ExpHall", 10.0*m, 10.0*m, 10.0*m); // HB test tests
-  G4Box *expHall = new G4Box("ExpHall", 8.0*m, 5.0*m, 27.5*m); // NPOL only runs
+  //G4Box *expHall = new G4Box("ExpHall", 8.0*m, 5.0*m, 27.5*m); // NPOL only runs
   expHallLV = new G4LogicalVolume(expHall,NpolMaterials::GetInstance()
 	 ->GetMaterial("HardVacuum"), "expHallLV", 0, 0, 0);
   expHallLV->SetVisAttributes(G4VisAttributes::GetInvisible());

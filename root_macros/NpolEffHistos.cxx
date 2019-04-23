@@ -864,7 +864,7 @@ void NpolEffHistos() {
   sectionEff_AllEvents->Write();
   // Close files
   outFile->Close();
-  sourceNeutron->Close();
+  //sourceNeutron->Close();
   
 }
 
