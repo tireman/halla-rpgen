@@ -55,7 +55,7 @@ int main(int argc, char *argv[]) {
   TChain *npolTree = new TChain("T");
   TChain *statsTree = new TChain("T2");
 
-  Double_t NpolAng = 0.431096; // radians (28 degrees) NPOL angle from beamline
+  Double_t NpolAng = 0.431096; // radians (24.7 degrees) NPOL angle from beamline
   Double_t targetTaggerPos = 185.0;  // Position of target tagger (cm)
   Double_t npolTaggerPos = 380.0;  // Position of NPOL Tagger (cm) 681.50 for 7 meter
   Double_t targetVertAngle = 0.450; // (radians) flipped for RP-GEN
