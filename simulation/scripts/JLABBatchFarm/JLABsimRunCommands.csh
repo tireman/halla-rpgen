@@ -18,5 +18,6 @@ source /site/12gev_phys/softenv.csh 2.2
 echo "Starting up Job Number $1."	
 
 $BUILD_DIR/Npolapp $BUILD_DIR/macros/$pType\.mac  
+
 source $BUILD_DIR/scripts/JLABBatchFarm/JLABAnalysisRunCommands.csh $1 $2
 
