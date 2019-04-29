@@ -23,9 +23,9 @@
 #include "NpolMaterials.hh"
 #include "NpolParticleFluxTagger.hh"
 
-G4double NpolParticleFluxTagger::vertAngle = 0.450*rad; // flipped for RP-GEN
-G4double NpolParticleFluxTagger::horAngle = 0.250*rad;  // 
-G4double NpolParticleFluxTagger::taggerPos = 1.85*m; // tagger position from target
+G4double NpolParticleFluxTagger::vertAngle = 0.550*rad; // flipped for RP-GEN
+G4double NpolParticleFluxTagger::horAngle = 0.350*rad;  // 
+G4double NpolParticleFluxTagger::taggerPos = 1.70*m; // tagger position from target
 G4double NpolParticleFluxTagger::NpolAng = 24.7*deg;    // nominal NPOL location 28.0*deg;
 
 NpolParticleFluxTagger::NpolParticleFluxTagger() {
@@ -51,9 +51,9 @@ void NpolParticleFluxTagger::ConstructParticleTagger(){
   G4Box *ParticleTagger = new G4Box("ParticleTagger",xlen/2,ylen/2,zlen/2);
   ParticleTaggerLV = 
 	new G4LogicalVolume(ParticleTagger,NpolMaterials::GetInstance()->GetMaterial("HardVacuum"),"ParticleTaggerLV",0,0,0);
-  //G4VisAttributes *TaggerVisAtt = new G4VisAttributes(G4Colour(0.2, 0.2, 0.2));
-  //ParticleTaggerLV->SetVisAttributes(TaggerVisAtt);
-  ParticleTaggerLV->SetVisAttributes(G4VisAttributes::GetInvisible());
+  G4VisAttributes *TaggerVisAtt = new G4VisAttributes(G4Colour(0.2, 0.2, 0.2));
+  ParticleTaggerLV->SetVisAttributes(TaggerVisAtt);
+  //ParticleTaggerLV->SetVisAttributes(G4VisAttributes::GetInvisible());
 }
 
 void NpolParticleFluxTagger::Place(G4LogicalVolume *motherLV) {
