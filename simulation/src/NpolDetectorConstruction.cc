@@ -47,7 +47,8 @@ NpolDetectorConstruction::NpolDetectorConstruction() {
   detectors.insert(new Hcal);
   detectors.insert(new NpolDipole2);
   detectors.insert(new NpolParticleFluxTagger);
-  detectors.insert(new NpolScatteringChamber);
+  detectprs.insert(new NpolLeadCurtain);
+  //detectors.insert(new NpolScatteringChamber);
   detectors.insert(new NpolPolarimeter());
   
   //detectors.insert(new NpolBDump);
