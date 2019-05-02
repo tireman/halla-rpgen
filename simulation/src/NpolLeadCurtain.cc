@@ -28,9 +28,8 @@
 #include "NpolParticleFluxTagger.hh"
 #include "NpolPolarimeter.hh"
 
-G4double NpolLeadCurtain::leadThickness = 5.0*cm;  // thickness of the lead curtain
-//G4double NpolLeadCurtain::PosLead = NpolParticleFluxTagger::taggerPos - leadThickness/2 + 18.50*cm; // Move D1 back 15*cm to fit lead shield
-G4double NpolLeadCurtain::PosLead = NpolDipole2::PosD2 - NpolDipole2::gapLength/2 + leadThickness/2 - 52.25*cm; // offset of lead (58.25 cm for location 1, 55.25 cm for Location 2 )
+G4double NpolLeadCurtain::leadThickness = 15.0*cm;  // thickness of the lead curtain
+G4double NpolLeadCurtain::PosLead =  NpolDipole2::PosD2 - NpolDipole2::ClampOffSetF - NpolDipole2::fieldClampThick/2 - leadThickness/2 - 0.5*cm;
 
 NpolLeadCurtain::NpolLeadCurtain() {
    ConstructLeadCurtain();
@@ -45,9 +44,8 @@ G4String NpolLeadCurtain::GetName() {
 // Construct a lead shield for in front of the polarimeter
 void NpolLeadCurtain::ConstructLeadCurtain(){
 
-  // Make lead curtain 5*cm wider/taller than what is necessary
-  G4double xlen = 80*cm; //2*(PosLead)*tan(NpolShieldHut::horAngle/2) + 5.0*cm;
-  G4double ylen = 80*cm; //2*(PosLead)*tan(NpolShieldHut::vertAngle/2) + 5.0*cm; 
+  G4double xlen = 2*(PosLead)*tan(NpolParticleFluxTagger::horAngle/2);// + 10.0*cm;//80*cm; 
+  G4double ylen = 2*(PosLead)*tan(NpolParticleFluxTagger::vertAngle/2);// + 10.0*cm; //80*cm;
 
   G4Box *LeadCurtain = new G4Box("LeadCurtain",xlen/2,ylen/2,leadThickness/2);
   LeadCurtainLV = new G4LogicalVolume(LeadCurtain,NpolMaterials::GetInstance()->GetMaterial("Pb"),"LeadCurtainLV",0,0,0);
