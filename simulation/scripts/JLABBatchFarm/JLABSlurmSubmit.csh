@@ -8,8 +8,7 @@ TRACK : simulation
 OS : centos7
 JOBNAME : RP-GEN_SIM_$3_$i
 MAIL : tireman@jlab.org
-TIME : 180
-NODE_TAG : farm18
+TIME : 240
 CPU : 1
 MEMORY : 1400 MB
 COMMAND : source JLABsimRunCommands.csh $i $3
