@@ -7,8 +7,8 @@ setenv Bfield 2
 
 setenv NPOLLIB_DIR $BUILD_DIR/../npollib
 setenv NPOLBASENAME source$pType\_Lead$Lead\cm_$Energy\GeV_$Bfield\Bdl
-setenv NPOLDIR /volatile/hallc/cgen/tireman/RP-GEN/bckgnd/run9 #/AllParticles
-setenv NPOLWORKDIR /volatile/hallc/cgen/tireman/RP-GEN/bckgnd/run9 #/AllParticles
+setenv NPOLDIR /volatile/hallc/cgen/tireman/RP-GEN/bckgnd/run10 #/AllParticles
+setenv NPOLWORKDIR /volatile/hallc/cgen/tireman/RP-GEN/bckgnd/run10 #/AllParticles
 setenv NPOLEVENTSPERFILE 100000
 
 setenv RawDataDir $NPOLDIR/root
