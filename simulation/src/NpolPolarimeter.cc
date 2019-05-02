@@ -220,12 +220,12 @@ void NpolPolarimeter::ConstructHodoscopeArray(G4LogicalVolume *motherLV) {
 
 void NpolPolarimeter::ConstructPolarimeterFluxTagger(G4LogicalVolume *motherLV){
 
-  double width = 100*cm; double height = 150*cm; double thick = 0.1*cm;
   double xPos,zPos; double tagLocation = 380*cm;
+  double width = 100*cm; double height = 150*cm; double thick = 0.1*cm;
 
   G4Box *NPOLTagger = new G4Box("NPOLTagger",width/2,height/2,thick/2);
   G4LogicalVolume *NPOLTaggerLV = new G4LogicalVolume(NPOLTagger,NpolMaterials::GetInstance()->GetMaterial("HardVacuum"),"NPOLTaggerLV",0,0,0);
-  // G4VisAttributes *NPOLTaggerVisAtt = new G4VisAttributes(G4Colour(0.2, 0.2, 0.2));
+  //G4VisAttributes *NPOLTaggerVisAtt = new G4VisAttributes(G4Colour(0.2, 0.2, 0.2));
   //NPOLTaggerLV->SetVisAttributes(NPOLTaggerVisAtt);
   NPOLTaggerLV->SetVisAttributes(G4VisAttributes::GetInvisible());
   
@@ -237,8 +237,8 @@ void NpolPolarimeter::ConstructPolarimeterFluxTagger(G4LogicalVolume *motherLV){
 
 void NpolPolarimeter::ConstructFakeGEM(G4LogicalVolume *motherLV){
 
-  double infnGEMx = 40.0*cm, infnGEMy = 3*40.0*cm, infnGEMz = 0.250*cm;
-  double uvaGEMx = 75.0*cm, uvaGEMy = 4*50.0*cm, uvaGEMz = 0.250*cm;
+  double infnGEMx = 40.0*cm, infnGEMy = 3*40.0*cm, infnGEMz = 0.0250*cm;
+  double uvaGEMx = 75.0*cm, uvaGEMy = 4*50.0*cm, uvaGEMz = 0.0250*cm;
 
   double infnXpos = 0.0*cm ,infnYpos = 0.0*cm, infnZpos = 0.0*cm;
   double uvaXpos = 0.0*cm ,uvaYpos = 0.0*cm, uvaZpos = 0.0*cm;
@@ -331,9 +331,9 @@ void NpolPolarimeter::ConstructFakeGEM(G4LogicalVolume *motherLV){
 void NpolPolarimeter::Place(G4LogicalVolume *motherLV) {
   
   copperAnalyzer->Place(motherLV);
-  ConstructVertAnalyzer(motherLV);
-  //ConstructGlasgowAnalyzer(motherLV);
-  ConstructFakeGEM(motherLV); // Just scintillator sheets in place of GEMs for tracking
+  //ConstructVertAnalyzer(motherLV);
+  ConstructGlasgowAnalyzer(motherLV);
+  ConstructFakeGEM(motherLV); // Just scintillator sheets in place of GEMs 
   ConstructHodoscopeArray(motherLV);
   ConstructPolarimeterFluxTagger(motherLV);
 
