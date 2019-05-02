@@ -536,7 +536,7 @@ int GetPlacementNumber(const std::string &volName) {
 
 TString FormInputFile(TString InputDir){
   
-  TString fileName = InputDir + "/histos/" + BaseName + "_NpolEff.root";
+  TString fileName = InputDir + "/rates/" + BaseName + "_Rates.root";
   
   return fileName;
 }
@@ -586,7 +586,7 @@ void RetrieveENVvariables() {
      return; // Return error if not found
   }
   
-  if(getenv("WorkOutputDir")){
+  if(getenv("RatesOutputDir")){
 	OutputDir = getenv("WorkOutputDir");
   }else{
 	std::cout << "Output Directory environmental varilable not set" << std::endl;

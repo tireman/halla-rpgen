@@ -31,7 +31,7 @@ TString NpolFileEnvManager::FormInputFile(TString InputDir){
 
 TString NpolFileEnvManager::FormOutputFile(TString OutputDir){
   
-  TString fileName =  OutputDir + "/" + BaseName + "_NpolEff" + "_" + JobNum + ".root";
+  TString fileName =  OutputDir + "/" + BaseName + "_Rates" + "_" + JobNum + ".root";
   
   return fileName;
 }
@@ -81,8 +81,8 @@ void NpolFileEnvManager::RetrieveENVvariables() {
      return; // Return error if not found
   }
   
-  if(getenv("HistoOutputDir")){
-	OutputDir = getenv("HistoOutputDir");
+  if(getenv("RatesOutputDir")){
+	OutputDir = getenv("RatesOutputDir");
   }else{
 	std::cout << "Output Directory environmental varilable not set" << std::endl;
 	return;
