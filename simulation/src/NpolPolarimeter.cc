@@ -93,7 +93,7 @@ void NpolPolarimeter::ConstructVertAnalyzer(G4LogicalVolume *motherLV) {
 
   G4double YPos = 0.0*m;  // y-direction (up-down of beam)
   G4double XPos = 0.0*m; // x-direction (left right of beam)
-  G4double ZPos = CHAnalyzerPos; // z-direction (in direction of beam)
+  G4double ZPos = CHAnalyzerPos;// CuAnalyzerPos + 22.925*cm; // // z-direction (in direction of beam)
   
   G4VSolid *VertAnalyzer = new G4Box("VertAnalyzer",vertAnalyzerX/2,vertAnalyzerY/2,vertAnalyzerZ/2);
   G4LogicalVolume *VertAnalyzerLV = new G4LogicalVolume(VertAnalyzer,
@@ -201,7 +201,7 @@ void NpolPolarimeter::ConstructHodoscopeArray(G4LogicalVolume *motherLV) {
   Rm.rotateY(-NpolAng);
   Rm.rotateZ(0.0*deg);
   ImprintPlate(LeftHodoscopeArray, motherLV, Tm, Rm); // left side
-
+ 
   for(int i = 0; i < 24; i++) {
 	Ta.setX(0.0*cm); Ta.setY(+(11*HodoscopeY + 0.5*HodoscopeY) - HodoscopeY*i);
 	Ta.setZ(0.0*cm);
@@ -220,8 +220,8 @@ void NpolPolarimeter::ConstructHodoscopeArray(G4LogicalVolume *motherLV) {
 
 void NpolPolarimeter::ConstructPolarimeterFluxTagger(G4LogicalVolume *motherLV){
 
-  double width = 100*cm; double height = 150*cm; double thick = 0.1*cm;
   double xPos,zPos; double tagLocation = 380*cm;
+  double width = 100*cm; double height = 150*cm; double thick = 0.1*cm;
 
   G4Box *NPOLTagger = new G4Box("NPOLTagger",width/2,height/2,thick/2);
   G4LogicalVolume *NPOLTaggerLV = new G4LogicalVolume(NPOLTagger,NpolMaterials::GetInstance()->GetMaterial("HardVacuum"),"NPOLTaggerLV",0,0,0);
@@ -237,8 +237,8 @@ void NpolPolarimeter::ConstructPolarimeterFluxTagger(G4LogicalVolume *motherLV){
 
 void NpolPolarimeter::ConstructFakeGEM(G4LogicalVolume *motherLV){
 
-  double infnGEMx = 40.0*cm, infnGEMy = 3*40.0*cm, infnGEMz = 0.250*cm;
-  double uvaGEMx = 75.0*cm, uvaGEMy = 4*50.0*cm, uvaGEMz = 0.250*cm;
+  double infnGEMx = 40.0*cm, infnGEMy = 3*40.0*cm, infnGEMz = 0.0250*cm;
+  double uvaGEMx = 75.0*cm, uvaGEMy = 4*50.0*cm, uvaGEMz = 0.0250*cm;
 
   double infnXpos = 0.0*cm ,infnYpos = 0.0*cm, infnZpos = 0.0*cm;
   double uvaXpos = 0.0*cm ,uvaYpos = 0.0*cm, uvaZpos = 0.0*cm;
@@ -261,13 +261,13 @@ void NpolPolarimeter::ConstructFakeGEM(G4LogicalVolume *motherLV){
   G4AssemblyVolume *infnModule = new G4AssemblyVolume();
   G4AssemblyVolume *uvaModule = new G4AssemblyVolume();
   G4AssemblyVolume *uvaModuleRear = new G4AssemblyVolume();
-  
+   
   ta.setX(0.); ta.setY(0.); ta.setZ(0.);
   infnModule->AddPlacedVolume(infnGEMLV,ta, &ra);
   uvaModule->AddPlacedVolume(uvaGEMLV,ta, &ra);
   ra.rotateY(90.0*deg);
   uvaModuleRear->AddPlacedVolume(uvaGEMLV, ta, &ra);
-  
+ 
   rm.rotateX(0.0*deg);
   rm.rotateY(-NpolAng);
   rm.rotateZ(0.0*deg);
@@ -308,7 +308,7 @@ void NpolPolarimeter::ConstructFakeGEM(G4LogicalVolume *motherLV){
   tm.setX(uvaXpos*cos(NpolAng) + -uvaZpos*sin(NpolAng)); tm.setY(uvaYpos);
   tm.setZ(uvaXpos*sin(NpolAng) + uvaZpos*cos(NpolAng));
   ImprintPlate(uvaModuleRear, motherLV, tm, rm);
-
+ 
   uvaXpos = LeftHodoXPos - 16.96*cm;
   tm.setX(uvaXpos*cos(NpolAng) + -uvaZpos*sin(NpolAng)); tm.setY(uvaYpos);
   tm.setZ(uvaXpos*sin(NpolAng) + uvaZpos*cos(NpolAng));
@@ -323,7 +323,7 @@ void NpolPolarimeter::ConstructFakeGEM(G4LogicalVolume *motherLV){
   tm.setX(uvaXpos*cos(NpolAng) + -uvaZpos*sin(NpolAng)); tm.setY(uvaYpos);
   tm.setZ(uvaXpos*sin(NpolAng) + uvaZpos*cos(NpolAng));
   ImprintPlate(uvaModuleRear, motherLV, tm, rm);
-  
+ 
 }
 
 
@@ -333,7 +333,7 @@ void NpolPolarimeter::Place(G4LogicalVolume *motherLV) {
   copperAnalyzer->Place(motherLV);
   //ConstructVertAnalyzer(motherLV);
   ConstructGlasgowAnalyzer(motherLV);
-  ConstructFakeGEM(motherLV); // Just scintillator sheets in place of GEMs for tracking
+  ConstructFakeGEM(motherLV); // Just scintillator sheets in place of GEMs 
   ConstructHodoscopeArray(motherLV);
   ConstructPolarimeterFluxTagger(motherLV);
 
