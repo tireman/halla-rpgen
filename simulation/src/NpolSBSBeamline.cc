@@ -726,9 +726,9 @@ void NpolSBSBeamline::ConstructCommonExitBeamline(G4LogicalVolume *worldlog) {
 	  
 		G4double zstart = zmin + i*(OMthick + OMspace);
 		G4double zstop = zstart + OMthick;
-		
+	  
 		G4Tubs *ring = new G4Tubs( name3,Rin_min, Rin_min+0.5*inch, OMthick/2.0, 0.0, twopi );
-		
+	  
 		name3 += "_log";
 		G4LogicalVolume *ring_log = new G4LogicalVolume( ring, Mat->GetMaterial("Fe"), name3 );
 	 
@@ -742,7 +742,7 @@ void NpolSBSBeamline::ConstructCommonExitBeamline(G4LogicalVolume *worldlog) {
 	  }
 	}
   }
- 
+
   if(fBeamlineConf == 1){
     //Last but not least: formed bellows! defer to tomorrow...
    
@@ -805,7 +805,7 @@ void NpolSBSBeamline::ConstructCommonExitBeamline(G4LogicalVolume *worldlog) {
   
     G4Tubs *IronTube1_vac = new G4Tubs("IronTube1_vac", 0.0, Rin, Thick/2.0, 0.0, twopi );
     G4LogicalVolume *IronTube1_vac_log = new G4LogicalVolume( IronTube1_vac, Mat->GetMaterial("Vacuum"), "IronTube1_vac_log" );
-
+  
     IronTube1_vac_log->SetVisAttributes( Vacuum_visatt );
 
     Z = 49.56*inch + Thick/2.0 - TargetCenter_zoffset;
@@ -830,8 +830,6 @@ void NpolSBSBeamline::ConstructCommonExitBeamline(G4LogicalVolume *worldlog) {
     new G4PVPlacement( 0, G4ThreeVector(X, Y, Z), IronTube2_log, "IronTube2_phys", worldlog, false, 0 );
     new G4PVPlacement( 0, G4ThreeVector(X, Y, Z), IronTube2_vac_log, "IronTube2_vac_phys", worldlog, false, 0 );
   }
-
-
 
   //Next, corrector magnets:
   // Define some dimensions that are going to be useful to define the distances
@@ -892,7 +890,7 @@ void NpolSBSBeamline::ConstructCommonExitBeamline(G4LogicalVolume *worldlog) {
     z_Magnets_array.push_back( z_conic_vacline_weldment + (0.84 + 0.14 + 49.47 + 8.3 - 6.47)*inch - UpstreamCoilThickY + YokeRightZFinal/2.0  );
     z_Magnets_array.push_back( z_conic_vacline_weldment + (0.84 + 0.14 + 118.34)*inch + DownstreamYokeDepth/2.0 );
     z_Magnets_array.push_back( z_conic_vacline_weldment + (0.84 + 0.14 + 118.34 - 1.71)*inch + DS_coil_ThickY + DS_coil_depth/2.0 );
-    
+  
     //z_Magnets_array = {z_conic_vacline_weldment + (0.84 + 0.14 + 49.47)*inch + UpstreamCoilDepth/2.0, z_conic_vacline_weldment + (0.84 + 0.14 + 49.47 + 8.3 - 6.47)*inch - UpstreamCoilThickY + YokeRightZFinal/2.0, z_conic_vacline_weldment + (0.84 + 0.14 + 118.34)*inch + DownstreamYokeDepth/2.0, z_conic_vacline_weldment + (0.84 + 0.14 + 118.34 - 1.71)*inch + DS_coil_ThickY + DS_coil_depth/2.0};
     break;
   default:
@@ -958,7 +956,7 @@ void NpolSBSBeamline::ConstructCommonExitBeamline(G4LogicalVolume *worldlog) {
   G4Box *YokeLeftPiece = new G4Box("YokeLeftPiece", YokeLeftPiece_Width/2.0, YokeLeftPiece_Height/2.0, YokeLeftPiece_Depth/2.0 );
   G4LogicalVolume *YokeLeftPiece_log = new G4LogicalVolume( YokeLeftPiece, Mat->GetMaterial("Fe"), "YokeLeftPiece_log" );
   YokeLeftPiece_log->SetVisAttributes(ironColor );
-  
+
   X = 7.52*inch + YokeLeftPiece_Width/2.0;
   Y = 0.0;
   new G4PVPlacement( 0, G4ThreeVector(X,Y,Z), YokeLeftPiece_log, "UpstreamYokeLeftPiece_phys", worldlog, false, 0 );
@@ -1042,6 +1040,7 @@ void NpolSBSBeamline::ConstructCommonExitBeamline(G4LogicalVolume *worldlog) {
   new G4PVPlacement( 0, G4ThreeVector(-X,Y,Z), DSpole_log, "DSpole_phys_right", worldlog, false, 1 );
   
 }
+
   /*if(fDetCon->fBLneutronDet){//TO-DO: set the possibility to deactivate it.
     // EFuchey: 2018/05/29: add a small dummy detector to study the neutron production by the shielding.
     // 
@@ -1168,23 +1167,10 @@ void NpolSBSBeamline::ConstructGMnBeamline(G4LogicalVolume *worldlog){
   G4LogicalVolume *entLog = new G4LogicalVolume(ent_tube, Mat->GetMaterial("SSteel"), "ent_log", 0, 0, 0);
   G4LogicalVolume *entvacLog = new G4LogicalVolume(ent_vac, Mat->GetMaterial("Vacuum"), "entvac_log", 0, 0, 0);
   
-  //We want to subtract this cylinder from the entry tube/pipe: 
-  // NOT for GMn, because the bealine connects with 
-  // G4Tubs *cut_cylinder = new G4Tubs("cut_cylinder", 0.0, swallrad, 1.0*m, 0.0*deg, 360.0*deg );
-  // G4RotationMatrix *cut_cylinder_rot = new G4RotationMatrix;
-  // cut_cylinder_rot->rotateX( -90.0*deg );
-  // G4SubtractionSolid *ent_tube_cut = new G4SubtractionSolid( "ent_tube_cut", ent_tube, cut_cylinder, cut_cylinder_rot, G4ThreeVector( 0.0, 0.0, ent_len/2.0 + swallrad_inner ) );
-  // G4SubtractionSolid *ent_vac_cut = new G4SubtractionSolid( "ent_vac_cut", ent_vac, cut_cylinder, cut_cylinder_rot, G4ThreeVector( 0.0, 0.0, ent_len/2.0 + swallrad_inner ) );
-  // G4LogicalVolume *entLog_cut = new G4LogicalVolume(ent_tube_cut, Mat->GetMaterial("SSteel"), "ent_log_cut", 0, 0, 0);
-  // G4LogicalVolume *entvacLog_cut = new G4LogicalVolume(ent_vac_cut, Mat->GetMaterial("Vacuum"), "entvac_log_cut", 0, 0, 0);
-  
   // EFuchey: 2017/02/14
   new G4PVPlacement(0,G4ThreeVector(0.0, 0.0, -ent_len/2-sc_entbeampipeflange_dist), entLog, "ent_phys", worldlog, false,0);
   new G4PVPlacement(0,G4ThreeVector(0.0, 0.0, -ent_len/2-sc_entbeampipeflange_dist), entvacLog, "entvac_phys", worldlog,false,0);
-  //}
-   
-  ConstructCommonExitBeamline(worldlog);
-  
+     
   /*
   // EFuchey: 2017/02/14: add the possibility to change the first parameters for the beam line polycone 
   // Default set of values;
@@ -1222,7 +1208,7 @@ void NpolSBSBeamline::ConstructGMnBeamline(G4LogicalVolume *worldlog){
 
 void NpolSBSBeamline::Place(G4LogicalVolume *worldlog) {
   
-  
+  ConstructCommonExitBeamline(worldlog);
   ConstructGMnBeamline(worldlog);
   
   //****** Place Shielding
