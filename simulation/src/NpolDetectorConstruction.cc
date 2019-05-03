@@ -38,6 +38,7 @@
 #include "NpolParticleFluxTagger.hh"
 #include "NpolAnalysisManager.hh"
 #include "NpolLeadCurtain.hh"
+#include "NpolSBSTargetBuilder.hh"
 
 NpolDetectorConstruction::NpolDetectorConstruction() {
   
@@ -48,8 +49,9 @@ NpolDetectorConstruction::NpolDetectorConstruction() {
   detectors.insert(new Hcal);
   detectors.insert(new NpolDipole2);
   detectors.insert(new NpolParticleFluxTagger);
-  detectors.insert(new NpolLeadCurtain);
+  //detectors.insert(new NpolLeadCurtain);
   //detectors.insert(new NpolScatteringChamber);
+  detectors.insert(new NpolSBSTargetBuilder);
   detectors.insert(new NpolPolarimeter());
   
   //detectors.insert(new NpolBDump);
