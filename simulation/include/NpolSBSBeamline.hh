@@ -17,7 +17,7 @@ public:
   virtual G4String GetName();
   virtual void Place(G4LogicalVolume *motherLV);
 
-  static G4int ScattChamberFlag, LeadOption;
+  static G4int ScattChamberFlag, LeadOption,fBeamlineConf;
   static G4String TargType, ExpType;
   static G4double beamheight, ent_len, swallrad_inner, swallrad;
   static G4double ent_rin, ent_rou,gapheight,shieldblock3_height;
@@ -27,10 +27,9 @@ public:
 private:
 
   void ConstructGEpLead();
-  void ConstructGEnLead();
-  void ConstructGEnClamp();
-  void ConstructGEpBeamline();
-  void ConstructGEnBeamline();
+  void ConstructGMnBeamline(G4LogicalVolume *);
+  void ConstructGMnLead();
+  void ConstructCommonExitBeamline(G4LogicalVolume *);
 
 private:
 
