@@ -17,6 +17,7 @@
 #include <map>
 #include <string>
 
+#include "G4PhysicalConstants.hh"
 #include "G4SystemOfUnits.hh"
 #include "G4NistManager.hh"
 #include "G4Isotope.hh"
@@ -85,6 +86,94 @@ void NpolMaterials::CreateMaterials() {
   materials["NpolGas"] = CreateNpolGas();
   materials["Mylar"] = CreateMylar();
   materials["C2Gas"] = CreateC2Gas();
+}
+
+
+
+double gasden = 0;
+
+G4Material *NpolMaterials::CreaterefH2(){
+  gasden = 10.5*atmosphere*(1.0079*2*g/Avogadro)/(300*kelvin*k_Boltzmann);
+  G4Material *refH2 = new G4Material("refH2", gasden, 1 );
+  refH2->AddElement(nistMan->FindOrBuildElement("H"), 1);
+
+  return refH2;
+}
+
+G4Material *NpolMaterials::CreaterefD2(){
+  gasden = 1.0*atmosphere*(2.0141*2*g/Avogadro)/(77*kelvin*k_Boltzmann);
+  G4Material *refD2 = new G4Material("refD2", gasden, 1 );
+  refD2->AddElement(nistMan->FindOrBuildElement("D"), 1);
+
+  return refD2;
+}
+
+G4Material *NpolMaterials::CreaterefN2(){
+  gasden = 10.5*atmosphere*(14.0067*2*g/Avogadro)/(300*kelvin*k_Boltzmann);
+  G4Material *refN2 = new G4Material("refN2", gasden, 1 );
+  refN2->AddElement(nistMan->FindOrBuildElement("N"), 1);
+
+  return refN2;
+}
+
+G4Material *NpolMaterials::Createpol3He(){
+  gasden = 10.77*atmosphere*(3.016*g/Avogadro)/(300*kelvin*k_Boltzmann);
+  G4Material *pol3He = new G4Material("pol3He", gasden, 1 );
+  pol3He->AddElement(nistMan->FindOrBuildElement("3He"), 1);
+
+  return pol3He;
+}
+
+G4Material *NpolMaterials::Createref4He(){
+  gasden = 0.1*atmosphere*(4.0026*g/Avogadro)/(300*kelvin*k_Boltzmann);
+  G4Material *ref4He = new G4Material("ref4He", gasden, 1 );
+  ref4He->AddElement(nistMan->FindOrBuildElement("4He"), 1);
+
+  return ref4He;
+}
+
+G4Material *NpolMaterials::CreateGE180(){
+  // Density 2.76 g/cm^3
+  // Index of Refraction 1.536
+  // Cell Glass - GE180 Aluminosilicate Glass
+  //Changed names of materials in this composition since the G4Materials used here are only used to make up GE180:
+  double bigden = 1e9*g/cm3;
+
+  // SiO2 60.3%
+  G4Material* SiO2 = new G4Material("GE180_SiO2", 2.2*g/cm3, 2 );
+  SiO2->AddElement(nistMan->FindOrBuildElement("Si"), 1);
+  SiO2->AddElement(nistMan->FindOrBuildElement("O"), 2);
+  //fMaterialsMap["GE180_SiO2"] = SiO2;
+
+  // BaO  18.2%
+  G4Material* BaO = new G4Material("GE180_BaO", bigden, 2 );
+  BaO->AddElement(nistMan->FindOrBuildElement("Ba"), 1);
+  BaO->AddElement(nistMan->FindOrBuildElement("O"), 1);
+  //fMaterialsMap["GE180_BaO"] = BaO;
+  // Al2O3 14.3%
+  G4Material* Al2O3 = new G4Material("GE180_Al2O3", bigden, 2 );
+  Al2O3->AddElement(nistMan->FindOrBuildElement("Al"), 2);
+  Al2O3->AddElement(nistMan->FindOrBuildElement("O"), 3);
+  //fMaterialsMap["GE180_Al2O3"] = Al2O3;
+  // CaO   6.5%
+  G4Material* CaO = new G4Material("GE180_CaO", bigden, 2 );
+  CaO->AddElement(nistMan->FindOrBuildElement("Ca"), 1);
+  CaO->AddElement(nistMan->FindOrBuildElement("O"), 1);
+  //fMaterialsMap["GE180_CaO"] = CaO;
+  // SrO   0.25%
+  G4Material* SrO = new G4Material("GE180_SrO", bigden, 2 );
+  SrO->AddElement(nistMan->FindOrBuildElement("Sr"), 1);
+  SrO->AddElement(nistMan->FindOrBuildElement("O"), 1);
+  //fMaterialsMap["GE180_SrO"] = SrO;
+
+  G4Material* GE180 = new G4Material("GE180", 2.76*g/cm3, 5);
+  GE180->AddMaterial(SiO2, 0.6039);
+  GE180->AddMaterial(BaO, 0.1829);
+  GE180->AddMaterial(Al2O3, 0.1439);
+  GE180->AddMaterial(CaO, 0.0659);
+  GE180->AddMaterial(SrO, 0.0034);
+
+  return GE180;
 }
 
 G4Material *NpolMaterials::CreateKapton(){
