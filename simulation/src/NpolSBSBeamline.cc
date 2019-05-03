@@ -183,7 +183,7 @@ void NpolSBSBeamline::ConstructGEpLead(){
   G4double xpos_lead_wall2 = -(8.0*inch + 2.5*cm + (zpos_lead_wall2 - 201.632*inch + TargetCenter_zoffset )*tan(1.5*deg));
   
   G4Box *lead_wall2 = new G4Box("lead_wall2", 5.08*cm/2, 42.00*inch/2, 2.4384*m/2 /*0.5*(zstop_lead_wall2 - zstart_lead_wall2)*/ ); // 18-April-2019 <-- W.T. reduced sizes to those in CAD drawing from Feb. 2019
-  
+
   lead_wall2_log = new G4LogicalVolume( lead_wall2, Mat->GetMaterial("Pb"), "lead_wall2_log" );
   
   rot_temp = new G4RotationMatrix;

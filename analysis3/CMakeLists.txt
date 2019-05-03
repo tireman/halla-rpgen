@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 
-project (NpolAnalysis)
-message("Configuring project NpolAnalysis.")
+project (NpolRates)
+message("Configuring project NpolRates.")
 
 set(CMAKE_CXX_FLAGS "-Wall -std=c++11")
 
@@ -18,5 +18,5 @@ include_directories(${ROOT_INCLUDE_DIR})
 file(COPY ${PROJECT_SOURCE_DIR}/scripts DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 file(MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/output)
 
-add_executable(NpolAnalysis ${sources})
-target_link_libraries(NpolAnalysis NpolClasses ${ROOT_LIBRARIES})
+add_executable(NpolRates ${sources})
+target_link_libraries(NpolRates NpolClasses ${ROOT_LIBRARIES})
