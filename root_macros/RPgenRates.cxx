@@ -115,8 +115,8 @@ void RPgenRates() {
 		  }
 		  break;
 		case 2: case 3: case 4: case 5: case 6: case 7: 
-		  Thresholds[0] = 0.5;
-		  for(int AB = 1; AB < 10; AB++){
+		  Thresholds[0] = 0.0;
+		  for(int AB = 1; AB < 11; AB++){
 			Thresholds[AB] = Thresholds[AB-1] + 0.5;
 		  }
 		  break;
@@ -587,14 +587,14 @@ void RetrieveENVvariables() {
   }
   
   if(getenv("RatesOutputDir")){
-	OutputDir = getenv("WorkOutputDir");
+	OutputDir = getenv("RatesOutputDir");
   }else{
 	std::cout << "Output Directory environmental varilable not set" << std::endl;
 	return;
   }
 
-  if(getenv("WorkInputDir")){
-	InputDir = getenv("WorkInputDir");
+  if(getenv("RatesInputDir")){
+	InputDir = getenv("RatesInputDir");
   }else{
 	std::cout << "Input Directory environmental varilable not set" << std::endl;
 	return;
