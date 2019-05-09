@@ -31,7 +31,7 @@ std::map<std::string, TVectorD *> vectors;
 std::map<std::string, TChain *> treechain;
 
 void RetrieveENVvariables();
-//TString FormInputFile(TString InputDir);
+TString FormInputFile(TString InputDir);
 TString FormOutputFile(TString OutputDir);
 void MergeRootObjects(TDirectory *TargetFile, TFile *InFile);
 void WriteMergeObjects( TFile *TargetFile );
@@ -60,14 +60,16 @@ void NpolCombineHistos() {
   DIR *d = NULL;
   struct dirent *dir = NULL;
  
-  d = opendir(OutputDir);
+  d = opendir(OutputDir+"/rates");
   if(d == NULL) {
     std::cerr << "Cannot open directory " << OutputDir << std::endl;
     return;
   }
   
+  TString TempFile = FormInputFile(InputDir);
   while((dir = readdir(d)) != NULL) {
-	TString InFile = OutputDir + "/" + dir->d_name;
+	//TString InFile = OutputDir + "/" + dir->d_name;
+	TString InFile = TempFile + "/" + dir->d_name;
 	
 	if(InFile == OutputFile) continue;
 	if(isRootFile(dir->d_name)) {
@@ -213,15 +215,15 @@ void MergeRootObjects( TDirectory *TargetFile, TFile *InFile ){
 
 TString FormInputFile(TString InputDir){
   
-  TString fileName = InputDir + "/" + BaseName + "_" + JobNum + ".root";
-  
+  TString fileName = InputDir + "/rates";
+  std::cout << "Input Filename: " << fileName << std::endl;
   return fileName;
 }
 
 TString FormOutputFile(TString OutputDir){
   
-  TString fileName =  OutputDir + "/" + BaseName + "_Histos.root";
-  
+  TString fileName =  OutputDir + "/rates/" + BaseName + "_Rates.root";
+
   return fileName;
 }
 
@@ -263,7 +265,7 @@ void RetrieveENVvariables() {
      return; // Return error if not found
   }
   
-  if(getenv("HistoOutputDir")){
+  /* if(getenv("HistoOutputDir")){
 	OutputDir = getenv("HistoOutputDir");
   }else{
 	std::cout << "Output Directory environmental varilable not set" << std::endl;
@@ -272,6 +274,20 @@ void RetrieveENVvariables() {
 
   if(getenv("HistoInputDir")){
 	InputDir = getenv("HistoInputDir");
+  }else{
+	std::cout << "Input Directory environmental varilable not set" << std::endl;
+	return;
+	}*/
+
+  if(getenv("RatesOutputDir")){
+	OutputDir = getenv("RatesOutputDir");
+  }else{
+	std::cout << "Output Directory environmental varilable not set" << std::endl;
+	return;
+  }
+
+  if(getenv("RatesInputDir")){
+	InputDir = getenv("RatesInputDir");
   }else{
 	std::cout << "Input Directory environmental varilable not set" << std::endl;
 	return;
