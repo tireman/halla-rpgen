@@ -131,10 +131,10 @@ int main(int argc, char *argv[]) {
   }
 
   //    2D-Histograms
-  //HistoMan->CreateHistograms("Generic_2D_Histo","A Generic 2D Histogram",200,-350.0,350.0, 200,-50.0,50.0);
+  HistoMan->CreateHistograms("Analyzer_XY","Analyzer Hit Position in XY",200,-75.0,75.0, 200,-125.0,125.0);
   
   //    3D-Histograms
-  HistoMan->CreateHistograms("Hit_Position_3D","3D Hit Position Histogram",100, -100.0,550.0, 100,-100.0,575.0, 100,-125.0,125.0); 
+  HistoMan->CreateHistograms("Hit_Position_3D","3D Hit Position Histogram",100, -100.0,550.0, 100,-100.0,875.0, 100,-125.0,125.0); 
   //HistoMan->CreateHistograms("Global_Position_3D","3D Global Hit Position Histogram",200,0.0,550.0, 200,350.,575., 200,-125,125); 
   //********************************* End Histogram Definitions ********************************
 
@@ -151,6 +151,13 @@ int main(int argc, char *argv[]) {
   double electronTime = totalEvents/(6.242e12); //6.242e12 e-/s at 1 microAmp (amount of physical time at 1uA)
   std::cout << totalEvents << " electrons thrown at setup." << std::endl;
   // ****** END STATS LOOP ****** 
+
+  std::string CType = "";
+  if(getenv("CHARGE_TYPE")){
+	CType = getenv("CHARGE_TYPE");
+  }else{
+	CType = "All";
+  }
   
   std::map<int,int> scintCounter;
   // ****** BEGIN EVENT LOOP ****** 
@@ -168,6 +175,7 @@ int main(int argc, char *argv[]) {
 	//std::pair<double,std::vector<double> > scattParticle4Vec;
 
 	std::set<int> scintTracks;
+	std::set<int> keepTracks;
 	std::map<std::string,NpolVertex *> vertexMap;  // Vertex Map Keyed to volume of origin
 	std::map<std::string,NpolDetectorEvent *> detEvents;   // Event map (NPOL Detector Class)
 	std::map<PolarimeterDetector, double> eDepArrayTotal;  // Total energy map for each array
@@ -178,6 +186,45 @@ int main(int argc, char *argv[]) {
     eDepArrayTotal[botEArray] = 0.0;
     eDepArrayTotal[botdEArray] = 0.0;
 
+	
+	
+	// ******* Cut out neutral, charged or keep all particles ******* //
+	/*std::vector<NpolVertex *>::iterator v_it3;
+	for(v_it3 = verts->begin(); v_it3 != verts->end(); v_it3++){
+      NpolVertex *vertex = *v_it3;
+      if(vertex == NULL) continue;
+	  
+	  //int pType = vertex->particleId;
+	  int AVNum = PProcess->GetAVNumber(vertex->volume);
+	  if (AVNum == 2 || AVNum == 6 || AVNum == 7) keepTracks.insert(vertex->trackId);
+  
+	  if(CType == "Charged"){
+		if(!(pType == 2112 || pType == 22 || pType == 111)) keepTracks.insert(vertex->trackId);
+	  }else if(CType == "Neutral"){
+		if((pType == 2112 || pType == 22 || pType == 111)) keepTracks.insert(vertex->trackId);
+	  }else if(CType == "All"){
+		keepTracks.insert(vertex->trackId); // all all
+		}
+	}*/
+
+	bool rejEvent = false;
+	// ******* Cut out neutral, charged or keep all particles ******* //
+	std::vector<NpolTagger *>::iterator v_it4;
+	for(v_it4 = tagEvent->begin(); v_it4 != tagEvent->end(); v_it4++){
+      NpolTagger *taggedEvent = *v_it4;
+      if(taggedEvent == NULL) continue;
+	  
+	  int pType = taggedEvent->particleId;
+  
+	  if(CType == "Neutral"){
+		if(!(pType == 2112 || pType == 22 || pType == 111)) rejEvent = true;
+	  }else if(CType == "Charged"){
+		if((pType == 2112 || pType == 22 || pType == 111)) rejEvent = true;
+	  }else if(CType == "All"){
+		rejEvent = false; // all all
+	  }
+	}
+	if(rejEvent) continue;
 
 	// fill detector map (as defined in NpolLib) with steps
 	std::vector<NpolStep *>::iterator s_it;
@@ -186,14 +233,15 @@ int main(int argc, char *argv[]) {
     for(s_it = steps->begin(); s_it != steps->end(); s_it++) {
       NpolStep *aStep = *s_it;
 	  if(aStep == NULL) continue;
+	  //if(keepTracks.find(aStep->trackId) == keepTracks.end()) continue;
+	  	  
 	  Process->fillDetectorEventMap(detEvents,aStep);
-
 	  std::string volName = aStep->volume;
 	  //std::map<std::string,NpolDetectorEvent *>::iterator det_it2;
 	  if(detEvents.find(volName) != detEvents.end()){
 		//det_it2 = detEvents.find(volName);
 		//if(det_it2->second->thresholdExceeded){
-		  if(detEvents.find(volName)->second->thresholdExceeded){
+		if(detEvents.find(volName)->second->thresholdExceeded){
 		  int AVnum = PProcess->GetAVNumber(volName);
 		  if(AVnum == 2 || AVnum == 6 || AVnum == 7){
 			//int trackID = aStep->trackId;
@@ -203,7 +251,7 @@ int main(int argc, char *argv[]) {
 	  }
 	}
 	// End steps loop
-	  
+
 	  
 	// Cycle through the tracks vector and store information in a map
 	std::vector<NpolVertex *>::iterator v_it;
@@ -224,11 +272,11 @@ int main(int argc, char *argv[]) {
 		double rotMat[3][3] = { {-1.,0.,0.}, {0.,0.,1.}, {0.,1.,0.} };
 		PProcess->RotateG4ToRoot(curPos,newPos,rotMat);
 		HistoMan->FillHistograms("Hit_Position_3D",-vertex->gPosX,vertex->gPosZ,vertex->gPosY);
-	  //HistoMan->FillHistograms("Hit_Position_3D",newPos[0],newPos[1],newPos[2]);
+		//HistoMan->FillHistograms("Hit_Position_3D",newPos[0],newPos[1],newPos[2]);
 	  }
 	}
 	// End the tracks loop
-
+	
 	// Cycle through the detector event map and do stuff
 	std::map<std::string,NpolDetectorEvent *>::iterator det_it;
 	for(det_it = detEvents.begin(); det_it != detEvents.end(); det_it++) {
@@ -238,10 +286,17 @@ int main(int argc, char *argv[]) {
 	  int PVNum = PProcess->GetPlacementNumber(volumeName);
 	  double eDep = 0.0;
 	  std::string hName = "";
+
 	  if(AVNum != -1 && det_it->second->thresholdExceeded){
 		int detNum = AVNum*10000 + ImprNum *1000 + PVNum;
 		if(scintCounter.find(detNum) == scintCounter.end()) scintCounter[detNum] = 0;
 		scintCounter[detNum]++;
+	  }
+
+	  if(AVNum == 2 && det_it->second->thresholdExceeded){
+		double xPos = det_it->second->lPosX;
+		double zPos = det_it->second->lPosY;
+		HistoMan->FillHistograms("Analyzer_XY",-xPos,zPos);
 	  }
 	 
 	  eDep = det_it->second->totEnergyDep;
@@ -280,6 +335,7 @@ int main(int argc, char *argv[]) {
 	}
 	 	
     // Clear out the maps for the next event
+	keepTracks.clear();
 	scintTracks.clear();
 	eDepArrayTotal.clear();
 

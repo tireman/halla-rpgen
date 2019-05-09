@@ -10,4 +10,3 @@ do
     /home/tireman/simulation/jlab/nmu-rpgen/build/analysis/scripts/NMUjobSubmit.sh $NUM1 $NUM2 &
 	sleep 0.25s
 done
-
