@@ -10,7 +10,7 @@
 class G4LogicalVolume;
 class G4AssemblyVolume;
 class G4VPhsicalVolume;
-//class G4DetectorConstruction;
+class G4DetectorConstruction;
 
 class NpolSBSTargetBuilder: public NpolDetectorFactory { 
 public:
@@ -23,12 +23,8 @@ public:
   virtual void Place(G4LogicalVolume *);
 
   void BuildCryoTarget(G4LogicalVolume *);
-  // void BuildC16CryoTarget(G4LogicalVolume *);// EFuchey: 2017/02/10: Now defunct \-> 
-  // Replaced by : BuildC16ScatCham
-  void BuildTDISTarget(G4LogicalVolume *);
   void BuildGasTarget(G4LogicalVolume *);
-  void BuildTPC(G4LogicalVolume *, G4double);
-  
+   
   // EFuchey: 2017/02/10:  This function is now meant to build the cryotarget and target cell only.
   // This function takes as input the mother logical volume, a rotation matrix, and a 3-vector offset.
   void BuildStandardCryoTarget(G4LogicalVolume *, G4RotationMatrix *, G4ThreeVector);
@@ -36,9 +32,7 @@ public:
   // EFuchey: 2017/02/10: Added those functions to build scattering chamber separately from target,
   // and avoid, if possible, duplicates of the code actually building the target.
   void BuildStandardScatCham(G4LogicalVolume *);
-  void BuildGEpScatCham(G4LogicalVolume *);
-  void BuildC16ScatCham(G4LogicalVolume *);
-  
+    
   void SetTarget(G4String t){fTargType = t;}
   void SetTargLen(G4double len){ fTargLen = len;}
   void SetTargDen(G4double den){ fTargDen = den;} //Currently, fTargDen has NO effect!
@@ -48,8 +42,7 @@ public:
   int GetSchamFlag() const { return fSchamFlag; }
   G4double GetTargLen() const { return fTargLen; }
   G4double GetTargDiameter() const { return fTargDiameter; }
-  //G4LogicalVolume *BuildSnoutWindows(G4Box *, G4double, G4double, G4double, G4double, G4double);
-
+ 
   G4bool GetFlux() const { return fFlux; }
   void SetFlux(G4bool b){fFlux = b;}
   
@@ -63,7 +56,6 @@ private:
 
   G4bool fFlux;
   
-  //Targ_t fTargType;
   G4String fTargType,fExpType;
 
 };
