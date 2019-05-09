@@ -21,23 +21,23 @@ hadd -f -k $NPOLDIR/root/$NPOLBASENAME\_$1.root $NPOLDIR/root/$NPOLBASENAME\_$1\
 rm $NPOLDIR/root/$NPOLBASENAME\_$1\_*.root
 
 if ( -e $NPOLDIR/root/$NPOLBASENAME\_$1.root ) then
-
+	
 	# This runs the NPOL efficiency code
 	$BUILD_DIR/../analysis/NpolAnalysis
-
+	
 	# The next 3 run the NPOL Process events code for neutral/charged particles types
 	setenv CHARGE_TYPE All
 	setenv HistoOutputDir $NPOLWORKDIR/$CHARGE_TYPE\Particles/histos
 	$BUILD_DIR/../analysis2/NpolProcessEvents
-
+	
 	setenv CHARGE_TYPE Neutral
 	setenv HistoOutputDir $NPOLWORKDIR/$CHARGE_TYPE\Particles/histos
 	$BUILD_DIR/../analysis2/NpolProcessEvents
-
+	
 	setenv CHARGE_TYPE Charged
 	setenv HistoOutputDir $NPOLWORKDIR/$CHARGE_TYPE\Particles/histos
 	$BUILD_DIR/../analysis2/NpolProcessEvents
-
+	
 	# Uncomment this line if you DO NOT want to keep the raw ROOT file after run #
 	#rm $NPOLDIR/root/$NPOLBASENAME\_$1.root  
 	

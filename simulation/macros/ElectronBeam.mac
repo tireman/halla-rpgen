@@ -48,5 +48,5 @@
 #
 /vis/scene/endOfEventAction accumulate 200
 /run/printProgress 1000
-/run/beamOn 100000
+/run/beamOn 1000000
 

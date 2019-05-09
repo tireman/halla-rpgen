@@ -47,6 +47,12 @@ private:
   G4Material *CreateNpolGas();
   G4Material *CreateMylar();
   G4Material *CreateC2Gas();
+  G4Material *CreateGE180();
+  G4Material *CreaterefH2();
+  G4Material *CreaterefD2();
+  G4Material *CreaterefN2();
+  G4Material *Createpol3He();
+  G4Material *Createref4He();
 
 private:
   static NpolMaterials *pInstance;

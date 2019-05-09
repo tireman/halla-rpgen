@@ -23,9 +23,9 @@
 #include "NpolMaterials.hh"
 #include "NpolParticleFluxTagger.hh"
 
-G4double NpolParticleFluxTagger::vertAngle = 0.450*rad; // flipped for RP-GEN
-G4double NpolParticleFluxTagger::horAngle = 0.250*rad;  // 
-G4double NpolParticleFluxTagger::taggerPos = 1.85*m; // tagger position from target
+G4double NpolParticleFluxTagger::vertAngle = 0.550*rad; // flipped for RP-GEN
+G4double NpolParticleFluxTagger::horAngle = 0.550*rad;  // 
+G4double NpolParticleFluxTagger::taggerPos = 1.70*m; // tagger position from target
 G4double NpolParticleFluxTagger::NpolAng = 24.7*deg;    // nominal NPOL location 28.0*deg;
 
 NpolParticleFluxTagger::NpolParticleFluxTagger() {
