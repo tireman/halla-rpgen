@@ -90,7 +90,8 @@ void NpolPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 	G4double nMom = primeEvent.neutronVector->P();
 	G4double nTheta = primeEvent.neutronVector->Theta();
 	G4double nPhi = primeEvent.neutronVector->Phi();
-	//if(!(nPhi > 
+	// added this line and goto statement to Cut out neutron events that don't get to the
+	// CH analyzer
 	if(!(nTheta > (abs(NpolAng) - 2*deg) && nTheta < (abs(NpolAng) + 2*deg))) goto regen; 
 	
 	G4double x0Pos = 0, y0Pos = 0, z0Pos = 0, zTarLen = 10*cm, raster = 2*mm;
