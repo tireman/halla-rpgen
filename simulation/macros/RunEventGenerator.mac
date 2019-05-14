@@ -24,7 +24,7 @@
 
 ### Particle Gun Commands ####
 # Particle type
-/gun/particle geantino
+/gun/particle neutron
 
 #
 # Commands below are for the NPOL messenger
@@ -45,6 +45,6 @@
 #
 # Run commands
 #
-/vis/scene/endOfEventAction accumulate 2000
-/run/printProgress 100
-/run/beamOn 2000
+/vis/scene/endOfEventAction accumulate 200
+/run/printProgress 1000
+/run/beamOn 100000
