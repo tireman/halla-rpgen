@@ -24,7 +24,7 @@
 #include "NpolSBSTargetBuilder.hh" 
 
 NpolSBSTargetBuilder::NpolSBSTargetBuilder(){ 
-
+// W.T. Commented out taget builder from target chamber on 14-May-2019
   fTargLen = 10.0*cm;
   fTargType = "kLD2";
   fTargDen = 10.5*atmosphere/(300*kelvin*k_Boltzmann);
@@ -766,7 +766,7 @@ void NpolSBSTargetBuilder::BuildStandardScatCham(G4LogicalVolume *worldlog ){
   rot_temp->rotateX(90.0*deg);
   
   //Call BuildStandardCryoTarget HERE !
-  BuildStandardCryoTarget(logicScatChamber, rot_temp, G4ThreeVector(0, 0, SCOffset));
+  // W.T. Commented out 14-May-2019 BuildStandardCryoTarget(logicScatChamber, rot_temp, G4ThreeVector(0, 0, SCOffset));
   
   G4VisAttributes* Invisible  = new G4VisAttributes(G4Colour(0.,0.,0.)); 
   Invisible->SetVisibility(false);
