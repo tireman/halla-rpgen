@@ -82,12 +82,17 @@ void NpolPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   // in the Macro file, /npol/gun/generator sets if the run uses the
   // diff. cross section method from Tongtong or the G4 GPS source.
   if(genMethod == "dcs"){
+
 	G4double NpolAng = -NpolPolarimeter::NpolAng;
+
+  regen:
 	GenerateNeutronEvent();
 	G4double nMom = primeEvent.neutronVector->P();
 	G4double nTheta = primeEvent.neutronVector->Theta();
 	G4double nPhi = primeEvent.neutronVector->Phi();
-
+	//if(!(nPhi > 
+	if(!(nTheta > (abs(NpolAng) - 2*deg) && nTheta < (abs(NpolAng) + 2*deg))) goto regen; 
+	
 	G4double x0Pos = 0, y0Pos = 0, z0Pos = 0, zTarLen = 10*cm, raster = 2*mm;
 	x0Pos = raster*G4UniformRand() - raster/2;
 	y0Pos = raster*G4UniformRand() - raster/2;
@@ -198,7 +203,7 @@ void NpolPrimaryGeneratorAction::GenerateNeutronEvent(){
 		
 		// Do not filter events by DCS
 		if(filter=="none"){
-		  if(thetaSElectron>thetaSElectronFree-openAngle/deg/2 && thetaSElectron <thetaSElectronFree+openAngle/deg/2){
+		  if(thetaSElectron>(thetaSElectronFree-openAngle/deg/2) && thetaSElectron <(thetaSElectronFree+openAngle/deg/2)){
 			evtFlag = true;
 			event++;
 		  }	event++;
@@ -207,7 +212,7 @@ void NpolPrimaryGeneratorAction::GenerateNeutronEvent(){
 		// Filter events by polarized DCS
 		if(filter=="unpolarized"){
 		  ran3 = maxDCS*randomNum.Rndm(); 
-		  if(thetaSElectron>thetaSElectronFree-openAngle/deg/2 && thetaSElectron <thetaSElectronFree+openAngle/deg/2){
+		  if(thetaSElectron>(thetaSElectronFree-openAngle/deg/2) && thetaSElectron <(thetaSElectronFree+openAngle/deg/2)){
 			mottDCS=pow(alpha,2)/(4*pow(beamEnergy,2)*pow(sin(thetaSElectronRad/2),4))*pow(cos(thetaSElectronRad/2),2);
 			unpolDCS=mottDCS*energySElectron/beamEnergy/((1+tau)*epsilon)*(tau*pow(gmn,2)+epsilon*pow(gen,2))/dcsConversion;
 			if(unpolDCS>ran3){
@@ -219,7 +224,7 @@ void NpolPrimaryGeneratorAction::GenerateNeutronEvent(){
 		
 		if(filter=="polarized"){ 
 		  ran3 = maxDCS*randomNum.Rndm(); 
-		  if(thetaSElectron>thetaSElectronFree-openAngle/deg/2 && thetaSElectron <thetaSElectronFree+openAngle/deg/2){
+		  if(thetaSElectron>(thetaSElectronFree-openAngle/deg/2) && thetaSElectron <(thetaSElectronFree+openAngle/deg/2)){
 			mottDCS=pow(alpha,2)/(4*pow(beamEnergy,2)*pow(sin(thetaSElectronRad/2),4))*pow(cos(thetaSElectronRad/2),2);
 			unpolDCS=mottDCS*energySElectron/beamEnergy/((1+tau)*epsilon)*(tau*pow(gmn,2)+epsilon*pow(gen,2))/dcsConversion;
 			if(gRandom->Rndm()<percentPosHeli) helicity=1;
@@ -282,7 +287,7 @@ void NpolPrimaryGeneratorAction::GenerateNeutronEvent(){
 		
 		// Do not filter events by DCS
 		if(filter=="none"){
-		  if(thetaSElectron>thetaSElectronFree-openAngle/deg/2 && thetaSElectron <thetaSElectronFree+openAngle/deg/2){
+		  if(thetaSElectron>(thetaSElectronFree-openAngle/deg/2) && thetaSElectron <(thetaSElectronFree+openAngle/deg/2)){
 			evtFlag = true;
 			event++;
 		  }	event++;
@@ -291,7 +296,7 @@ void NpolPrimaryGeneratorAction::GenerateNeutronEvent(){
 		// Filter events by polarized DCS
 		if(filter=="unpolarized"){
 		  ran3 = maxDCS*randomNum.Rndm(); 
-		  if(thetaSElectron>thetaSElectronFree-openAngle/deg/2 && thetaSElectron <thetaSElectronFree+openAngle/deg/2){
+		  if(thetaSElectron>(thetaSElectronFree-openAngle/deg/2) && thetaSElectron <(thetaSElectronFree+openAngle/deg/2)){
 			mottDCS=pow(alpha,2)/(4*pow(beamEnergy,2)*pow(sin(thetaSElectronRad/2),4))*pow(cos(thetaSElectronRad/2),2);
 			unpolDCS=mottDCS*energySElectron/beamEnergy/((1+tau)*epsilon)*(tau*pow(gmn,2)+epsilon*pow(gen,2))/dcsConversion;
 			
@@ -304,7 +309,7 @@ void NpolPrimaryGeneratorAction::GenerateNeutronEvent(){
 		
 		if(filter=="polarized"){
 		  ran3 = maxDCS*randomNum.Rndm(); 
-		  if(thetaSElectron>thetaSElectronFree-openAngle/deg/2 && thetaSElectron <thetaSElectronFree+openAngle/deg/2){
+		  if(thetaSElectron>(thetaSElectronFree-openAngle/deg/2) && thetaSElectron <(thetaSElectronFree+openAngle/deg/2)){
 			mottDCS=pow(alpha,2)/(4*pow(beamEnergy,2)*pow(sin(thetaSElectronRad/2),4))*pow(cos(thetaSElectronRad/2),2);
 			unpolDCS=mottDCS*energySElectron/beamEnergy/((1+tau)*epsilon)*(tau*pow(gmn,2)+epsilon*pow(gen,2))/dcsConversion;
 			if(gRandom->Rndm()<percentPosHeli) helicity=1;
@@ -369,7 +374,7 @@ void NpolPrimaryGeneratorAction::GenerateNeutronEvent(){
 		
 		// Do not filter events by DCS
 		if(filter=="none"){
-		  if(thetaSElectron>thetaSElectronFree-openAngle/deg/2 && thetaSElectron <thetaSElectronFree+openAngle/deg/2){	
+		  if(thetaSElectron>(thetaSElectronFree-openAngle/deg/2) && thetaSElectron <(thetaSElectronFree+openAngle/deg/2)){	
 			evtFlag = true;
 			event++;
 		  }	event++;
@@ -378,7 +383,7 @@ void NpolPrimaryGeneratorAction::GenerateNeutronEvent(){
 		// Filter events by polarized DCS
 		if(filter=="unpolarized"){
 		  ran3 = maxDCS*randomNum.Rndm(); 
-		  if(thetaSElectron>thetaSElectronFree-openAngle/deg/2 && thetaSElectron <thetaSElectronFree+openAngle/deg/2){
+		  if(thetaSElectron>(thetaSElectronFree-openAngle/deg/2) && thetaSElectron <(thetaSElectronFree+openAngle/deg/2)){
 			double k1=q2*pow(gmn,2);
 			double k2=pow(2*massNeutron,2)*(pow(gen,2)+tau*pow(gmn,2))/(1+tau);
 			double term1=beam.E()*pP1->E()-beam.Px()*pP1->Px()-beam.Py()*pP1->Py()-beam.Pz()*pP1->Pz()-2*pow(massElectron,2);
@@ -394,7 +399,7 @@ void NpolPrimaryGeneratorAction::GenerateNeutronEvent(){
 		
 		if(filter=="polarized"){
 		  ran3 = maxDCS*randomNum.Rndm();
-		  if(thetaSElectron>thetaSElectronFree-openAngle/deg/2 && thetaSElectron <thetaSElectronFree+openAngle/deg/2){
+		  if(thetaSElectron>(thetaSElectronFree-openAngle/deg/2) && thetaSElectron <(thetaSElectronFree+openAngle/deg/2)){
 			double k1=q2*pow(gmn,2);
 			double k2=pow(2*massNeutron,2)*(pow(gen,2)+tau*pow(gmn,2))/(1+tau);
 			double term1=beam.E()*pP1->E()-beam.Px()*pP1->Px()-beam.Py()*pP1->Py()-beam.Pz()*pP1->Pz()-2*pow(massElectron,2);
@@ -449,7 +454,7 @@ void NpolPrimaryGeneratorAction::GenerateNeutronEvent(){
 		
 		// Do not filter events by DCS
 		if(filter=="none"){
-		  if(thetaSElectron>thetaSElectronFree-openAngle/deg/2 && thetaSElectron <thetaSElectronFree+openAngle/deg/2){	
+		  if(thetaSElectron>(thetaSElectronFree-openAngle/deg/2) && thetaSElectron <(thetaSElectronFree+openAngle/deg/2)){	
 			evtFlag = true;
 			event++;
 		  }	event++;
